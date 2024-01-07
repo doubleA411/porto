@@ -36,6 +36,22 @@ function Details() {
         twitter : ""
     });
 
+    const [ projects ,  setProjects ] = useState([]);
+    const [ proj ,  setProj ] = useState({
+      title : "",
+      desc : "",
+      link : "",
+      year : ""
+    });
+
+    const [ works , setWorks ] = useState([]);
+    const [ work , setWork ] = useState({
+      role : "",
+      company : "",
+      from : "",
+      to : "",
+      link : ""
+    });
     const handleUser = (e) => {
         
         setUser({
@@ -62,6 +78,20 @@ function Details() {
 
     }
 
+    const handleProj = (e) => {
+      setProj({
+        ...proj,
+        [e.target.name] : e.target.value,
+      });
+    } 
+
+    const handleWork = (e) => {
+      setWork({
+        ...work,
+        [e.target.name] : e.target.value,
+      });
+    }
+
 
     const addData = async () => {
       const { data, error } = await supabase.from("userData").insert([
@@ -73,7 +103,7 @@ function Details() {
           "about-lg": about.aboutLg,
           socialmedia: social,
           uid: userId.id,
-          projects: [],
+          projects: projects,
         },
       ]);
 
@@ -87,8 +117,8 @@ function Details() {
 
 
   return (
-    <div className=" flex flex-wrap items-start gap-6 p-5 justify-evenly">
-      <div className=" flex-auto flex flex-col bg-white p-10">
+    <div className=" px-6 md:px-6 pt-16 pb-24 md:pt-20 md:pb-20 max-w-[700px] mx-auto text-primary ">
+      <div className=" flex-auto flex flex-col p-10">
         <div className=" flex justify-between">
           <p className=" text-2xl mb-5">user info.</p>
           <div
@@ -104,7 +134,7 @@ function Details() {
             value={userData.name}
             onChange={(e) => handleUser(e)}
             placeholder="name"
-            className="outline-none bg-slate-100 p-4 rounded-xl w-full"
+            className="outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
           />
           <input
             name="email"
@@ -112,28 +142,26 @@ function Details() {
             value={userData.email}
             onChange={(e) => handleUser(e)}
             placeholder="contact info. (email)"
-            className=" outline-none bg-slate-100 p-4 rounded-xl w-full"
+            className="outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
           />
           <input
             name="image"
             type="text"
             value=""
             placeholder="image"
-            className=" outline-none bg-slate-100 p-4 rounded-xl w-full"
+            className="outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
           />
           <input
             name="logo"
             type="text"
             value=""
             placeholder="logo"
-            className=" outline-none bg-slate-100 p-4 rounded-xl w-full"
+            className="outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
           />
-
-        
         </div>
       </div>
 
-      <div className=" flex-auto flex flex-col bg-white p-10">
+      <div className=" flex-auto flex flex-col p-10">
         <div className=" flex justify-between">
           <p className=" text-2xl mb-5">about you.</p>
           <div
@@ -151,7 +179,7 @@ function Details() {
             value={about.oneliner}
             onChange={(e) => handleAbout(e)}
             placeholder="one liner"
-            className="outline-none bg-slate-100 p-4 rounded-xl w-full"
+            className="outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
           />
           <textarea
             name="aboutSmall"
@@ -159,7 +187,7 @@ function Details() {
             value={about.aboutSmall}
             onChange={(e) => handleAbout(e)}
             placeholder="about (short)"
-            className=" outline-none bg-slate-100 p-4 rounded-xl w-full"
+            className="outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
           />
           <textarea
             name="aboutLg"
@@ -167,13 +195,12 @@ function Details() {
             value={about.aboutLg}
             onChange={(e) => handleAbout(e)}
             placeholder="about (large)"
-            className=" outline-none bg-slate-100 p-4 rounded-xl w-full"
+            className="outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
           />
-        
         </div>
       </div>
 
-      <div className=" flex-auto flex flex-col bg-white p-10">
+      <div className=" flex-auto flex flex-col  p-10">
         <div className=" flex justify-between">
           <p className=" text-2xl mb-5">other stuff.</p>
           <div
@@ -191,7 +218,7 @@ function Details() {
             value={social.insta}
             onChange={(e) => handleSocial(e)}
             placeholder="instagram"
-            className="outline-none bg-slate-100 p-4 rounded-xl w-full"
+            className="outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
           />
           <input
             name="linkedin"
@@ -199,7 +226,7 @@ function Details() {
             value={social.linkedin}
             onChange={(e) => handleSocial(e)}
             placeholder="linkedin"
-            className=" outline-none bg-slate-100 p-4 rounded-xl w-full"
+            className=" outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
           />
           <input
             name="github"
@@ -207,7 +234,7 @@ function Details() {
             value={social.github}
             onChange={(e) => handleSocial(e)}
             placeholder="github"
-            className=" outline-none bg-slate-100 p-4 rounded-xl w-full"
+            className=" outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
           />
           <input
             name="twitter"
@@ -215,128 +242,135 @@ function Details() {
             value={social.twitter}
             onChange={(e) => handleSocial(e)}
             placeholder="twitter"
-            className=" outline-none bg-slate-100 p-4 rounded-xl w-full"
+            className=" outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
           />
-         
         </div>
       </div>
 
-      <div className=" flex-auto flex flex-col bg-white p-10">
+      <div className=" flex-auto flex flex-col p-10">
         <div className=" flex justify-between">
-          <p className=" text-2xl mb-5">project 0.</p>
+          <p className=" text-2xl mb-5">project {projects.length + 1} .</p>
           <div className=" bg-red-500 w-3 h-3 rounded-full"></div>
         </div>
         <div className=" flex flex-col items-start gap-4 text-black w-full">
           <input
             type="text"
-            value=""
+            name="title"
+            value={proj.title}
+            onChange={(e) => handleProj(e)}
             placeholder="title"
-            className="outline-none bg-slate-100 p-4 rounded-xl w-full"
+            className="outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
           />
           <input
             type="text"
-            value=""
+            name="desc"
+            value={proj.desc}
+            onChange={(e) => handleProj(e)}
             placeholder="description"
-            className=" outline-none bg-slate-100 p-4 rounded-xl w-full"
+            className="outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
           />
           <input
             type="text"
-            value=""
+            name="link"
+            value={proj.link}
+            onChange={(e) => handleProj(e)}
             placeholder="project link"
-            className=" outline-none bg-slate-100 p-4 rounded-xl w-full"
+            className="outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
+          />
+          <input
+            type="text"
+            name="year"
+            value={proj.year}
+            onChange={(e) => handleProj(e)}
+            placeholder="year"
+            className="outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
           />
 
+          <button
+            className=" text-white bg-darker px-3 py-2"
+            onClick={() => {
+              setProjects((prev) => [...prev, proj]);
+              setProj({
+                title: "",
+                link: "",
+                year: "",
+                desc: "",
+              });
+            }}
+          >
+            add
+          </button>
         </div>
       </div>
 
-      <div className=" flex-auto flex flex-col bg-white p-10">
+      <div className=" flex-auto flex flex-col  p-10">
         <div className=" flex justify-between">
-          <p className=" text-2xl mb-5">project 1.</p>
+          <p className=" text-2xl mb-5">work/intern {works.length + 1} .</p>
           <div className=" bg-red-500 w-3 h-3 rounded-full"></div>
         </div>
         <div className=" flex flex-col items-start gap-4 text-black w-full">
           <input
             type="text"
-            value=""
-            placeholder="title"
-            className="outline-none bg-slate-100 p-4 rounded-xl w-full"
+            name="role"
+            value={work.role}
+            onChange={(e) => handleWork(e)}
+            placeholder="role"
+            className="outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
           />
           <input
             type="text"
-            value=""
-            placeholder="description"
-            className=" outline-none bg-slate-100 p-4 rounded-xl w-full"
+            name="company"
+            value={work.company}
+            onChange={(e) => handleWork(e)}
+            placeholder="company"
+            className=" outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
           />
           <input
             type="text"
-            value=""
-            placeholder="project link"
-            className=" outline-none bg-slate-100 p-4 rounded-xl w-full"
+            name="from"
+            value={work.from}
+            onChange={(e) => handleWork(e)}
+            placeholder="from"
+            className=" outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
+          />
+          <input
+            type="text"
+            name="to"
+            value={work.to}
+            onChange={(e) => handleWork(e)}
+            placeholder="to"
+            className=" outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
           />
 
-         
-        </div>
-      </div>
-      <div className=" flex-auto flex flex-col bg-white p-10">
-        <div className=" flex justify-between">
-          <p className=" text-2xl mb-5">project 2.</p>
-          <div className=" bg-red-500 w-3 h-3 rounded-full"></div>
-        </div>
-        <div className=" flex flex-col items-start gap-4 text-black w-full">
           <input
             type="text"
-            value=""
-            placeholder="title"
-            className="outline-none bg-slate-100 p-4 rounded-xl w-full"
-          />
-          <input
-            type="text"
-            value=""
-            placeholder="description"
-            className=" outline-none bg-slate-100 p-4 rounded-xl w-full"
-          />
-          <input
-            type="text"
-            value=""
-            placeholder="project link"
-            className=" outline-none bg-slate-100 p-4 rounded-xl w-full"
+            name="link"
+            value={work.link}
+            onChange={(e) => handleWork(e)}
+            placeholder="company url"
+            className=" outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
           />
 
-        
-        </div>
-      </div>
-
-      <div className=" flex-auto flex flex-col bg-white p-10">
-        <div className=" flex justify-between">
-          <p className=" text-2xl mb-5">project 4.</p>
-          <div className=" bg-red-500 w-3 h-3 rounded-full"></div>
-        </div>
-        <div className=" flex flex-col items-start gap-4 text-black w-full">
-          <input
-            type="text"
-            value=""
-            placeholder="title"
-            className="outline-none bg-slate-100 p-4 rounded-xl w-full"
-          />
-          <input
-            type="text"
-            value=""
-            placeholder="description"
-            className=" outline-none bg-slate-100 p-4 rounded-xl w-full"
-          />
-          <input
-            type="text"
-            value=""
-            placeholder="project link"
-            className=" outline-none bg-slate-100 p-4 rounded-xl w-full"
-          />
-
-         
+          <button
+            className=" text-white bg-darker px-3 py-2"
+            onClick={() => {
+              setWorks((prev) => [...prev, work]);
+              setWork({
+                role: "",
+                company: "",
+                from: "",
+                to: "",
+                link: "",
+              });
+            }}
+          >
+            add
+          </button>
         </div>
       </div>
 
-      <div className=" flex-auto flex flex-col bg-red-500 p-10 cursor-pointer" >
-        <div className=" flex justify-between" onClick={() => addData()} >
+      <div className=" flex-auto flex flex-col bg-red-500 p-10 cursor-pointer">
+        <div className=" flex justify-between" onClick={() => addData()}>
           <p className=" text-2xl mb-5">submit</p>
         </div>
       </div>
