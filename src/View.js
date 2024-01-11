@@ -2,10 +2,7 @@ import React from 'react'
 import { supabase } from './supabase'
 import { useEffect, useState } from 'react';
 
-// [
-//   { "role": "Software Developer", "company": "Brainvibe", "from": "2021", "to": "2021" },
-//   { "role": "Machine Learning Intern", "company": "Augray", "from": "2022", "to": "2022" },
-// ];
+
 
 
 function View() {
@@ -62,7 +59,7 @@ function View() {
             </div>
 
             <div className="flex animate-in flex-col gap-6 text-secondary md:flex-row md:items-center">
-              <div className=" w-[85px] h-[85px] bg-darker  rounded-full"></div>
+                <img src={data.image} alt="" className=' bg-darker rounded-full w-[85px] h-[85px] p-1' />
               <ul className="space-y-2 animated-list text-grey">
                 <li>
                   <a
@@ -239,7 +236,10 @@ function View() {
                   </li>
                   <li className="transition-opacity col-span-1">
                     <a
-                      href={`https://github.com/${data.socialmedia.github}`}
+                      href={
+                        data.socialmedia &&
+                        `https://github.com/${data.socialmedia.github}`
+                      }
                       className="underline-offset-4 transition-opacity no-underline w-full border rounded-lg p-4 border-darker inline-grid"
                     >
                       <div className="flex items-center gap-3 text-primary">
@@ -275,7 +275,10 @@ function View() {
                   </li>
                   <li className="transition-opacity col-span-1">
                     <a
-                      href={`https://instagram.com/${data.socialmedia.insta}`}
+                      href={
+                        data.socialmedia &&
+                        `https://instagram.com/${data.socialmedia.insta}`
+                      }
                       className="underline-offset-4 transition-opacity no-underline w-full border rounded-lg p-4 border-darker inline-grid"
                     >
                       <div className="flex items-center gap-3 text-primary">
@@ -311,7 +314,10 @@ function View() {
                   </li>
                   <li className="transition-opacity col-span-1">
                     <a
-                      href={`https://linkedin.com/${data.socialmedia.linkedin}`}
+                      href={
+                        data.socialmedia &&
+                        `https://linkedin.com/${data.socialmedia.linkedin}`
+                      }
                       className="underline-offset-4 transition-opacity no-underline w-full border-[1px] rounded-lg p-4 border-darker inline-grid"
                     >
                       <div className="flex items-center gap-3 text-primary">

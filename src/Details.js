@@ -1,10 +1,26 @@
 import { useState, useEffect } from 'react';
 import { supabase } from './supabase';
-
-
+import { useNavigate } from "react-router-dom";
+import { v4 as uuidv4 } from 'uuid';
 
 function Details() {
   const [ userId, setUserID ] = useState({});
+
+
+
+  const navigate = useNavigate();
+
+
+  async function signOut() {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.log("Error occured: ", error);
+    }
+  }
+
+  const handleSignOut = async () => {
+    await signOut();
+  };
 
 
   const getUser = async() => {
@@ -19,8 +35,8 @@ function Details() {
     const [ userData, setUser ] = useState({
         name: "",
         email : "",
-        logo : "",
-        image : ""
+        logo : null,
+        image : null,
     });
 
     const [ about, setAbout] = useState({
@@ -97,16 +113,18 @@ function Details() {
       const { data, error } = await supabase.from("userData").insert([
         {
           name: userData.name,
+          image: userData.image,
+          // logo: userData.logo,
           contact: userData.email,
           oneliner: about.oneliner,
-          "about-sm": about.aboutSmall,
-          "about-lg": about.aboutLg,
+          aboutSm: about.aboutSmall,
+          aboutLg: about.aboutLg,
           socialmedia: social,
           uid: userId.id,
           projects: projects,
+          work : works,
         },
       ]);
-
       if(error) {
         console.log(error.message);
       } else {
@@ -114,10 +132,74 @@ function Details() {
       }
     };
 
+   
+
+
+    const uploadImage = async (name, file) => {
+
+      if( name === "avatar") {
+          console.log(file);
+          const { data, error } = await supabase.storage
+            .from("porto")
+            .upload(`${userId.id}/avatar.png`,file);
+    
+            if(error) {
+              console.log(error)
+            } else {
+              console.log(data);
+              
+            }
+            const { data : imageData } = supabase.storage
+              .from("porto")
+              .getPublicUrl(`${userId.id}/avatar.png`);
+
+              if(data) {
+                setUser({
+                  ...userData,
+                  image: imageData.publicUrl,
+                })
+                console.log("userData updated")
+              } else {
+                console.log(error)
+              }
+        } else {
+          const { data, error } = await supabase.storage
+            .from("porto")
+            .upload(`${userId.id}/logo.png`, file);
+  
+          if (error) {
+            console.log(error.message);
+          } else {
+            console.log(data);
+          }
+          const { data: imageData } = supabase.storage
+            .from("porto")
+            .getPublicUrl(`${userId.id}/logo.png`);
+
+          if (data) {
+            setUser({
+              ...userData,
+              logo: imageData.publicUrl,
+            });
+            console.log("userData updated");
+          } else {
+            console.log(error);
+          }
+        }
+    }
+
+
+
 
 
   return (
     <div className=" px-6 md:px-6 pt-16 pb-24 md:pt-20 md:pb-20 max-w-[700px] mx-auto text-primary ">
+      <p
+        className=" bg-primary text-dark flex items-end cursor-pointer w-fit"
+        onClick={() => handleSignOut()}
+      >
+        signout
+      </p>
       <div className=" flex-auto flex flex-col p-10">
         <div className=" flex justify-between">
           <p className=" text-2xl mb-5">user info.</p>
@@ -127,7 +209,7 @@ function Details() {
             } w-3 h-3 rounded-full`}
           ></div>
         </div>
-        <div className=" flex flex-col items-start gap-4 text-black w-full">
+        <div className=" flex flex-col items-start gap-4 text-primary w-full">
           <input
             name="name"
             type="text"
@@ -144,20 +226,32 @@ function Details() {
             placeholder="contact info. (email)"
             className="outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
           />
-          <input
-            name="image"
-            type="text"
-            value=""
-            placeholder="image"
-            className="outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
-          />
-          <input
-            name="logo"
-            type="text"
-            value=""
-            placeholder="logo"
-            className="outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
-          />
+            <input
+              name="image"
+              type="file"
+              onChange={(e) =>
+                // setUser({
+                //   ...userData,
+                //   image: e.target.files[0],
+                // })
+                uploadImage('avatar', e.target.files[0])
+              }
+              placeholder="image"
+              className="outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
+            />
+            
+            <input
+              name="logo"
+              type="file"
+              onChange={(e) =>
+                setUser({
+                  ...userData,
+                  logo: e.target.files[0],
+                })
+              }
+              placeholder="logo"
+              className="outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
+            />
         </div>
       </div>
 
@@ -172,7 +266,7 @@ function Details() {
             } w-3 h-3 rounded-full`}
           ></div>
         </div>
-        <div className=" flex flex-col items-start gap-4 text-black w-full">
+        <div className=" flex flex-col items-start gap-4 text-white w-full">
           <input
             name="oneliner"
             type="text"
@@ -211,7 +305,7 @@ function Details() {
             } w-3 h-3 rounded-full`}
           ></div>
         </div>
-        <div className=" flex flex-col items-start gap-4 text-black w-full">
+        <div className=" flex flex-col items-start gap-4 text-white w-full">
           <input
             name="insta"
             type="text"
@@ -252,7 +346,7 @@ function Details() {
           <p className=" text-2xl mb-5">project {projects.length + 1} .</p>
           <div className=" bg-red-500 w-3 h-3 rounded-full"></div>
         </div>
-        <div className=" flex flex-col items-start gap-4 text-black w-full">
+        <div className=" flex flex-col items-start gap-4 text-white w-full">
           <input
             type="text"
             name="title"
@@ -308,7 +402,7 @@ function Details() {
           <p className=" text-2xl mb-5">work/intern {works.length + 1} .</p>
           <div className=" bg-red-500 w-3 h-3 rounded-full"></div>
         </div>
-        <div className=" flex flex-col items-start gap-4 text-black w-full">
+        <div className=" flex flex-col items-start gap-4 text-white w-full">
           <input
             type="text"
             name="role"
@@ -370,7 +464,13 @@ function Details() {
       </div>
 
       <div className=" flex-auto flex flex-col bg-red-500 p-10 cursor-pointer">
-        <div className=" flex justify-between" onClick={() => addData()}>
+        <div
+          className=" flex justify-between"
+          onClick={() => {
+            addData();
+            navigate("/view");
+          }}
+        >
           <p className=" text-2xl mb-5">submit</p>
         </div>
       </div>
