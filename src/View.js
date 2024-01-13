@@ -17,32 +17,42 @@ function View() {
     setUserID(user);
   };
 
-  useEffect(() => {
-    getUser();
-  }, [userId]);
+   
 
 
 
   const getData = async() => {
     try {
-        const { data , error } = await supabase.from("userData").select().eq("uid",userId.id)
-
-        if(error) {
-            console.log(error.message)
-        } else {
-            console.log(data)
-            setData(data[0]);
-
-        }
+       if(userId && userId.id) {
+         const { data, error } = await supabase
+           .from("userData")
+           .select()
+           .eq("uid", userId.id);
+            if (error) {
+              console.log(error.message);
+            } else {
+              console.log(data);
+              setData(data[0]);
+            } 
+       }
+       
         
     } catch (error) {
         console.error(error.message)
     }
   }
 
-  useEffect(() => {
-    getData();
-  }, [userId])
+   useEffect(() => {
+     const fetchData = async () => {
+       await getUser();
+       if(Object.keys(data).length === 0) {
+         await getData();
+       }
+     };
+
+     fetchData();
+   }, [userId, data]); 
+ 
 
 
 
@@ -72,9 +82,9 @@ function View() {
                     <svg
                       stroke="currentColor"
                       fill="currentColor"
-                      stroke-width="0"
+                      strokeWidth="0"
                       viewBox="0 0 496 512"
-                      class="text-xl"
+                      className="text-xl"
                       height="1em"
                       width="1em"
                       xmlns="http://www.w3.org/2000/svg"
@@ -98,9 +108,9 @@ function View() {
                     <svg
                       stroke="currentColor"
                       fill="currentColor"
-                      stroke-width="0"
+                      strokeWidth="0"
                       viewBox="0 0 496 512"
-                      class="text-xl"
+                      className="text-xl"
                       height="1em"
                       width="1em"
                       xmlns="http://www.w3.org/2000/svg"
@@ -124,9 +134,9 @@ function View() {
                     <svg
                       stroke="currentColor"
                       fill="currentColor"
-                      stroke-width="0"
+                      strokeWidth="0"
                       viewBox="0 0 496 512"
-                      class="text-xl"
+                      className="text-xl"
                       height="1em"
                       width="1em"
                       xmlns="http://www.w3.org/2000/svg"
@@ -154,12 +164,12 @@ function View() {
                     viewBox="0 0 20 20"
                     fill="currentColor"
                     aria-hidden="true"
-                    class="h-5 w-5"
+                    className="h-5 w-5"
                   >
                     <path
-                      fill-rule="evenodd"
+                      fillRule="evenodd"
                       d="M5.22 14.78a.75.75 0 001.06 0l7.22-7.22v5.69a.75.75 0 001.5 0v-7.5a.75.75 0 00-.75-.75h-7.5a.75.75 0 000 1.5h5.69l-7.22 7.22a.75.75 0 000 1.06z"
-                      clip-rule="evenodd"
+                      clipRule="evenodd"
                     ></path>
                   </svg>
                   <span>Email me</span>
@@ -176,12 +186,12 @@ function View() {
                     viewBox="0 0 20 20"
                     fill="currentColor"
                     aria-hidden="true"
-                    class="h-5 w-5"
+                    className="h-5 w-5"
                   >
                     <path
-                      fill-rule="evenodd"
+                      fillRule="evenodd"
                       d="M5.22 14.78a.75.75 0 001.06 0l7.22-7.22v5.69a.75.75 0 001.5 0v-7.5a.75.75 0 00-.75-.75h-7.5a.75.75 0 000 1.5h5.69l-7.22 7.22a.75.75 0 000 1.06z"
-                      clip-rule="evenodd"
+                      clipRule="evenodd"
                     ></path>
                   </svg>
                   <span>More ways to connect </span>
@@ -211,7 +221,7 @@ function View() {
                             xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 20 20"
                             fill="currentColor"
-                            class="w-5 h-5 text-primary"
+                            className="w-5 h-5 text-primary"
                           >
                             <path d="M3 4a2 2 0 00-2 2v1.161l8.441 4.221a1.25 1.25 0 001.118 0L19 7.162V6a2 2 0 00-2-2H3z"></path>
                             <path d="M19 8.839l-7.77 3.885a2.75 2.75 0 01-2.46 0L1 8.839V14a2 2 0 002 2h14a2 2 0 002-2V8.839z"></path>
@@ -223,12 +233,11 @@ function View() {
                           xmlns="http://www.w3.org/2000/svg"
                           viewBox="0 0 20 20"
                           fill="currentColor"
-                          class="w-5 h-5 ml-auto text-grey"
                         >
                           <path
-                            fill-rule="evenodd"
+                            fillRule="evenodd"
                             d="M5.22 14.78a.75.75 0 001.06 0l7.22-7.22v5.69a.75.75 0 001.5 0v-7.5a.75.75 0 00-.75-.75h-7.5a.75.75 0 000 1.5h5.69l-7.22 7.22a.75.75 0 000 1.06z"
-                            clip-rule="evenodd"
+                            clipRule="evenodd"
                           ></path>
                         </svg>
                       </div>
@@ -247,7 +256,7 @@ function View() {
                           <svg
                             stroke="currentColor"
                             fill="currentColor"
-                            stroke-width="0"
+                            strokeWidth="0"
                             viewBox="0 0 496 512"
                             height="1em"
                             width="1em"
@@ -262,12 +271,11 @@ function View() {
                           xmlns="http://www.w3.org/2000/svg"
                           viewBox="0 0 20 20"
                           fill="currentColor"
-                          class="w-5 h-5 ml-auto text-grey"
                         >
                           <path
-                            fill-rule="evenodd"
+                            fillRule="evenodd"
                             d="M5.22 14.78a.75.75 0 001.06 0l7.22-7.22v5.69a.75.75 0 001.5 0v-7.5a.75.75 0 00-.75-.75h-7.5a.75.75 0 000 1.5h5.69l-7.22 7.22a.75.75 0 000 1.06z"
-                            clip-rule="evenodd"
+                            clipRule="evenodd"
                           ></path>
                         </svg>
                       </div>
@@ -286,7 +294,7 @@ function View() {
                           <svg
                             stroke="currentColor"
                             fill="currentColor"
-                            stroke-width="0"
+                            strokeWidth="0"
                             viewBox="0 0 448 512"
                             height="1em"
                             width="1em"
@@ -301,12 +309,11 @@ function View() {
                           xmlns="http://www.w3.org/2000/svg"
                           viewBox="0 0 20 20"
                           fill="currentColor"
-                          class="w-5 h-5 ml-auto text-grey"
                         >
                           <path
-                            fill-rule="evenodd"
+                            fillRule="evenodd"
                             d="M5.22 14.78a.75.75 0 001.06 0l7.22-7.22v5.69a.75.75 0 001.5 0v-7.5a.75.75 0 00-.75-.75h-7.5a.75.75 0 000 1.5h5.69l-7.22 7.22a.75.75 0 000 1.06z"
-                            clip-rule="evenodd"
+                            clipRule="evenodd"
                           ></path>
                         </svg>
                       </div>
@@ -325,7 +332,7 @@ function View() {
                           <svg
                             stroke="currentColor"
                             fill="currentColor"
-                            stroke-width="0"
+                            strokeWidth="0"
                             viewBox="0 0 448 512"
                             height="1em"
                             width="1em"
@@ -340,12 +347,11 @@ function View() {
                           xmlns="http://www.w3.org/2000/svg"
                           viewBox="0 0 20 20"
                           fill="currentColor"
-                          class="w-5 h-5 ml-auto text-grey"
                         >
                           <path
-                            fill-rule="evenodd"
+                            fillRule="evenodd"
                             d="M5.22 14.78a.75.75 0 001.06 0l7.22-7.22v5.69a.75.75 0 001.5 0v-7.5a.75.75 0 00-.75-.75h-7.5a.75.75 0 000 1.5h5.69l-7.22 7.22a.75.75 0 000 1.06z"
-                            clip-rule="evenodd"
+                            clipRule="evenodd"
                           ></path>
                         </svg>
                       </div>
@@ -360,7 +366,7 @@ function View() {
               <ul className="flex flex-col w-full gap-8 animated-list">
                 {data.projects &&
                   data.projects.map((project) => (
-                    <li className="">
+                    <li className="" key={project.title}>
                       <a
                         className="underline-offset-4 flex justify-between w-full px-3 py-2 -mx-3 -my-2 no-underline"
                         href={project.link}
@@ -383,7 +389,7 @@ function View() {
               <ul className="flex flex-col w-full gap-8 animated-list">
                 {data.work &&
                   data.work.map((e) => (
-                    <li className="">
+                    <li className="" key={e.company}>
                       <a
                         className="underline-offset-4 flex justify-between w-full px-3 py-2 -mx-3 -my-2 no-underline"
                         href={e.link}

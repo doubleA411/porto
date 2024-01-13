@@ -1,12 +1,10 @@
 import { useState, useEffect } from 'react';
 import { supabase } from './supabase';
 import { useNavigate } from "react-router-dom";
-import { v4 as uuidv4 } from 'uuid';
 
 function Details() {
   const [ userId, setUserID ] = useState({});
-
-
+  const [  viewData, setView ] = useState({});
 
   const navigate = useNavigate();
 
@@ -23,14 +21,87 @@ function Details() {
   };
 
 
-  const getUser = async() => {
-    const { data :{ user }} = await supabase.auth.getUser();
-    setUserID(user);
-   }
+  // const getUser = async() => {
+  //   const { data :{ user }} = await supabase.auth.getUser();
+  //   setUserID(user);
+  //  }
 
-  useEffect(() => {
-    getUser();
-  },[])
+   const getUser = async () => {
+     try {
+       const {
+         data: { user },
+       } = await supabase.auth.getUser();
+       setUserID(user);
+     } catch (error) {
+       console.error("Error getting user:", error);
+     }
+   };
+
+
+   
+  //  const getData = async () => {
+  //    if(userData) {
+  //      const { data, error } = await supabase
+  //      .from("userData")
+  //      .select()
+  //      .eq("uid", userId.id);
+  //      if (error) {
+  //        console.log(error);
+  //       } else {
+  //         console.log(data[0]);
+  //         setView(data[0]);
+  //       }
+  //     } 
+  //   }
+    const getData = async () => {
+      try {
+        if (userId) {
+          const { data, error } = await supabase
+            .from("userData")
+            .select()
+            .eq("uid", userId.id);
+
+          if (error) {
+            console.error("Error fetching data:", error);
+          } else if (data && data.length > 0) {
+            console.log(data[0]);
+            setView(data[0]);
+          } else {
+            console.log("No data found for the user");
+            // You might want to handle this case accordingly
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    useEffect(() => {
+      const fetchData = async () => {
+        await getUser();
+
+        if (Object.keys(viewData).length === 0) {
+          await getData();
+        }
+
+      };
+
+      fetchData();
+    }, [userId,viewData]); 
+
+
+   
+
+    
+    
+    // useEffect(() => {
+    //   getUser();
+    // },[])
+
+    // useEffect(() => {
+    //   getData();
+    // },[userId])
+
 
     const [ userData, setUser ] = useState({
         name: "",
@@ -51,6 +122,32 @@ function Details() {
         github : "",
         twitter : ""
     });
+
+
+    useEffect(() => {
+      setUser({
+        ...userData,
+        name: Object.keys(viewData).length > 0 ? viewData.name : "",
+        email: Object.keys(viewData).length > 0 ? viewData.contact : "",
+      });
+
+      setAbout({
+        oneliner: Object.keys(viewData).length > 0 ? viewData.oneliner : "",
+        aboutLg: Object.keys(viewData).length > 0 ? viewData.aboutLg : "",
+        aboutSmall: Object.keys(viewData).length > 0 ? viewData.aboutSm : "",
+      });
+
+      setSocial({
+        insta:
+          Object.keys(viewData).length > 0 ? viewData.socialmedia.insta : "",
+        linkedin:
+          Object.keys(viewData).length > 0 ? viewData.socialmedia.linkedin : "",
+        github:
+          Object.keys(viewData).length > 0 ? viewData.socialmedia.github : "",
+        twitter:
+          Object.keys(viewData).length > 0 ? viewData.socialmedia.twitter : "",
+      });
+    },[viewData])
 
     const [ projects ,  setProjects ] = useState([]);
     const [ proj ,  setProj ] = useState({
@@ -132,6 +229,64 @@ function Details() {
       }
     };
 
+    const updateData = async () => {
+
+      const updatedData = {};
+
+      if(userData.name !== viewData.name) {
+        updatedData.name = userData.name;
+      }
+      if (userData.email !== viewData.contact) {
+        updatedData.contact = userData.email;
+      }
+      if (about.oneliner !== viewData.oneliner) {
+        updatedData.oneliner = about.oneliner;
+      }
+      if (about.aboutSmall !== viewData.aboutSm) {
+        updatedData.aboutSm = about.aboutSmall;
+      }
+      if (about.aboutLg !== viewData.aboutLg) {
+        updatedData.aboutLg = about.aboutLg;
+      }
+      if (social.insta !== viewData.socialmedia.insta) {
+        updatedData.socialmedia.insta = social.insta;
+      }
+      if (social.linkedin !== viewData.socialmedia.linkedin) {
+        updatedData.socialmedia.linkedin = social.linkedin;
+      }
+      if (social.github !== viewData.socialmedia.github) {
+        updatedData.socialmedia.github = social.github;
+      }
+      if (social.twitter !== viewData.socialmedia.twitter) {
+        updatedData.socialmedia.twitter = social.twitter;
+      }
+
+      console.log(updatedData, userId.id);
+
+      
+
+      if(userId) {
+        const { data, error } = await supabase
+          .from("userData")
+          .update(updatedData)
+          .eq("uid", userId.id)
+          .select();
+
+        if (error) {
+          console.log(error);
+        } else {
+          console.log("Success", data);
+        }
+      }
+    }
+
+    const submitData = async () => {
+      if(Object.keys(viewData).length > 0) {
+       await updateData();
+      } else {
+       await addData();
+      }
+    }
    
 
 
@@ -194,12 +349,22 @@ function Details() {
 
   return (
     <div className=" px-6 md:px-6 pt-16 pb-24 md:pt-20 md:pb-20 max-w-[700px] mx-auto text-primary ">
-      <p
-        className=" bg-primary text-dark flex items-end cursor-pointer w-fit"
-        onClick={() => handleSignOut()}
-      >
-        signout
-      </p>
+      <div className=" flex items-center justify-between w-full">
+        <p
+          className=" bg-primary text-dark cursor-pointer p-1"
+          onClick={() => handleSignOut()}
+        >
+          signout
+        </p>
+        {viewData && viewData.name && (
+          <p
+            className=" bg-primary text-dark cursor-pointer p-1"
+            onClick={() => navigate("/view")}
+          >
+            view my page
+          </p>
+        )}
+      </div>
       <div className=" flex-auto flex flex-col p-10">
         <div className=" flex justify-between">
           <p className=" text-2xl mb-5">user info.</p>
@@ -213,7 +378,9 @@ function Details() {
           <input
             name="name"
             type="text"
-            value={userData.name}
+            value={
+              userData.name
+            }
             onChange={(e) => handleUser(e)}
             placeholder="name"
             className="outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
@@ -221,37 +388,39 @@ function Details() {
           <input
             name="email"
             type="text"
-            value={userData.email}
+            value={
+              userData.email
+            }
             onChange={(e) => handleUser(e)}
             placeholder="contact info. (email)"
             className="outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
           />
-            <input
-              name="image"
-              type="file"
-              onChange={(e) =>
-                // setUser({
-                //   ...userData,
-                //   image: e.target.files[0],
-                // })
-                uploadImage('avatar', e.target.files[0])
-              }
-              placeholder="image"
-              className="outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
-            />
-            
-            <input
-              name="logo"
-              type="file"
-              onChange={(e) =>
-                setUser({
-                  ...userData,
-                  logo: e.target.files[0],
-                })
-              }
-              placeholder="logo"
-              className="outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
-            />
+          <input
+            name="image"
+            type="file"
+            onChange={(e) =>
+              // setUser({
+              //   ...userData,
+              //   image: e.target.files[0],
+              // })
+              uploadImage("avatar", e.target.files[0])
+            }
+            placeholder="image"
+            className="outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
+          />
+
+          <input
+            name="logo"
+            type="file"
+            onChange={(e) =>
+              setUser({
+                ...userData,
+                logo: e.target.files[0],
+              })
+            }
+            placeholder="logo"
+            className="outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
+          />
         </div>
       </div>
 
@@ -270,7 +439,9 @@ function Details() {
           <input
             name="oneliner"
             type="text"
-            value={about.oneliner}
+            value={
+             about.oneliner
+            }
             onChange={(e) => handleAbout(e)}
             placeholder="one liner"
             className="outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
@@ -278,7 +449,9 @@ function Details() {
           <textarea
             name="aboutSmall"
             type="text"
-            value={about.aboutSmall}
+            value={
+              about.aboutSmall
+            }
             onChange={(e) => handleAbout(e)}
             placeholder="about (short)"
             className="outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
@@ -286,7 +459,9 @@ function Details() {
           <textarea
             name="aboutLg"
             type="text"
-            value={about.aboutLg}
+            value={
+             about.aboutLg
+            }
             onChange={(e) => handleAbout(e)}
             placeholder="about (large)"
             className="outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
@@ -309,7 +484,9 @@ function Details() {
           <input
             name="insta"
             type="text"
-            value={social.insta}
+            value={
+              social.insta
+            }
             onChange={(e) => handleSocial(e)}
             placeholder="instagram"
             className="outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
@@ -317,7 +494,9 @@ function Details() {
           <input
             name="linkedin"
             type="text"
-            value={social.linkedin}
+            value={
+             social.linkedin
+            }
             onChange={(e) => handleSocial(e)}
             placeholder="linkedin"
             className=" outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
@@ -325,7 +504,9 @@ function Details() {
           <input
             name="github"
             type="text"
-            value={social.github}
+            value={
+             social.github
+            }
             onChange={(e) => handleSocial(e)}
             placeholder="github"
             className=" outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
@@ -333,7 +514,9 @@ function Details() {
           <input
             name="twitter"
             type="text"
-            value={social.twitter}
+            value={
+             social.twitter
+            }
             onChange={(e) => handleSocial(e)}
             placeholder="twitter"
             className=" outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
@@ -467,11 +650,16 @@ function Details() {
         <div
           className=" flex justify-between"
           onClick={() => {
-            addData();
-            navigate("/view");
+            submitData().then(() => navigate("/view"));
+            
           }}
         >
-          <p className=" text-2xl mb-5">submit</p>
+          {viewData && viewData.name && (
+            <p className=" text-2xl mb-5">update</p>
+          )}
+          {viewData && viewData.length <= 0 && (
+            <p className=" text-2xl mb-5">submit</p>
+          )}
         </div>
       </div>
     </div>
