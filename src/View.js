@@ -1,65 +1,95 @@
 import React from 'react'
-import { supabase } from './supabase'
-import { useEffect, useState } from 'react';
+import {motion} from 'framer-motion';
 
 
 
 
-function View() {
+function View( { data }) {
 
-  const [userId, setUserID] = useState({});
-  const [data ,setData] = useState({})
+  // const [userId, setUserID] = useState({});
+  // const [data ,setData] = useState({})
 
-  const getUser = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    setUserID(user);
-  };
+  // const getUser = async () => {
+  //   const {
+  //     data: { user },
+  //   } = await supabase.auth.getUser();
+  //   setUserID(user);
+  // };
 
    
 
 
 
-  const getData = async() => {
-    try {
-       if(userId && userId.id) {
-         const { data, error } = await supabase
-           .from("userData")
-           .select()
-           .eq("uid", userId.id);
-            if (error) {
-              console.log(error.message);
-            } else {
-              console.log(data);
-              setData(data[0]);
-            } 
-       }
+  // const getData = async() => {
+  //   try {
+  //      if(userId && userId.id) {
+  //        const { data, error } = await supabase
+  //          .from("userData")
+  //          .select()
+  //          .eq("uid", userId.id);
+  //           if (error) {
+  //             console.log(error.message);
+  //           } else {
+  //             console.log(data);
+  //             setData(data[0]);
+  //           } 
+  //      }
        
         
-    } catch (error) {
-        console.error(error.message)
-    }
-  }
+  //   } catch (error) {
+  //       console.error(error.message)
+  //   }
+  // }
 
-   useEffect(() => {
-     const fetchData = async () => {
-       await getUser();
-       if(Object.keys(data).length === 0) {
-         await getData();
-       }
-     };
+  //  useEffect(() => {
+  //    const fetchData = async () => {
+  //      await getUser();
+  //      if(Object.keys(data).length === 0) {
+  //        await getData();
+  //      }
+  //    };
 
-     fetchData();
-   }, [userId, data]); 
+  //    fetchData();
+  //  }, [userId, data]); 
  
 
 
 
   return (
     <div className="px-6 md:px-6 pt-16 pb-24 md:pt-20 md:pb-20 max-w-[700px] mx-auto">
-      {data && (
-        <div className=" flex flex-col gap-16 md:gap-24 ">
+      {Object.keys(data).length === 0 && (
+        <div className=' flex flex-col'>
+          <div className="fixed top-0 left-0 w-screen h-screen flex items-center justify-center m-auto">
+            <motion.div
+              animate={{
+                scale: [1, 2, 2, 1, 1],
+                rotate: [0, 0, 270, 270, 0],
+                borderRadius: ["20%", "20%", "50%", "50%", "20%"],
+              }}
+              transition={{
+                duration: 1, // Animation duration (in seconds)
+                repeat: Infinity, // Repeats the animation indefinitely
+                repeatDelay: 0, // Delay before repeating (if needed)
+                ease: "linear", // Easing function for the animation
+              }}
+              style={{
+                width: 50, // Example width
+                height: 50,
+                // Example height
+                backgroundColor: "white", // Example background color
+                margin: "auto",
+              }}
+            ></motion.div>
+          </div>
+          { window.location.pathname.includes('/share') === true ? <p>Deploying....</p> : <p></p> }
+        </div>
+      )}
+      {Object.keys(data).length > 0 && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className=" flex flex-col gap-16 md:gap-24 "
+        >
           <div className=" flex animate-in flex-col gap-8">
             <div>
               <h1 className=" text-3xl font-bold tracking-tight text-primary">
@@ -69,7 +99,11 @@ function View() {
             </div>
 
             <div className="flex animate-in flex-col gap-6 text-secondary md:flex-row md:items-center">
-                <img src={data.image} alt="" className=' bg-darker rounded-full w-[85px] h-[85px] p-1' />
+              <img
+                src={data.image}
+                alt=""
+                className=" bg-darker rounded-full w-[85px] h-[85px] p-1"
+              />
               <ul className="space-y-2 animated-list text-grey">
                 <li>
                   <a
@@ -415,7 +449,7 @@ function View() {
           <p className=" text-grey">
             Created by Minimal Mind | Inspired from Brain Ruiz
           </p>
-        </div>
+        </motion.div>
       )}
     </div>
   );
