@@ -13,9 +13,9 @@ function Share() {
       try {
         if (id) {
           const { data, error } = await supabase
-            .from("userData")
+            .from("deploy_table")
             .select()
-            .eq("uid", id);
+            .eq("deployName", id);
           if (error) {
             console.log(error.message);
           } else {

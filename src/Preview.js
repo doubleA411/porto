@@ -43,12 +43,11 @@ function Preview() {
         await getData();
       }
     };
-
     fetchData();
   }, [userId, data]); 
   return (
     <div className="relative ">
-      <div className="fixed bottom-0 m-10 right-0 text-grey cursor-pointer hover:underline" onClick={() => navigate(`/share/${userId.id}`)}>
+      <div className="fixed bottom-0 m-10 right-0 text-grey cursor-pointer hover:underline" onClick={() => navigate(`/deploy/${userId.id}`)}>
         <div className=" flex gap-1 items-center">
           Deploy
           <svg

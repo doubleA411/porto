@@ -8,6 +8,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Share from './Share';
 import WithNav from './WithNav';
 import WithoutNav from './WithoutNav';
+import Deploy from './Deploy';
 
 
 function App() {
@@ -55,6 +56,7 @@ function App() {
             {session && (
               <>
                 <Route path="/" element={<Details />} />
+                <Route path='/deploy/:id' element = { <Deploy />} />
                 <Route path="/view" element={<Preview />} />
               </>
             )}

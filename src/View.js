@@ -58,7 +58,7 @@ function View( { data }) {
   return (
     <div className="px-6 md:px-6 pt-16 pb-24 md:pt-20 md:pb-20 max-w-[700px] mx-auto">
       {Object.keys(data).length === 0 && (
-        <div className=' flex flex-col'>
+        <div className=" flex flex-col">
           <div className="fixed top-0 left-0 w-screen h-screen flex items-center justify-center m-auto">
             <motion.div
               animate={{
@@ -81,7 +81,7 @@ function View( { data }) {
               }}
             ></motion.div>
           </div>
-          { window.location.pathname.includes('/share') === true ? <p>Deploying....</p> : <p></p> }
+
         </div>
       )}
       {Object.keys(data).length > 0 && (
@@ -104,7 +104,7 @@ function View( { data }) {
                 alt=""
                 className=" bg-darker rounded-full w-[85px] h-[85px] p-1"
               />
-              <ul className="space-y-2 animated-list text-grey">
+              {/* <ul className="space-y-2 animated-list text-grey">
                 <li>
                   <a
                     href={
@@ -183,7 +183,7 @@ function View( { data }) {
                     <span>Repositories</span>
                   </a>
                 </li>
-              </ul>
+              </ul> */}
             </div>
 
             <p className="max-w-lg animate-in text-primary">{data.aboutSm}</p>
@@ -429,7 +429,9 @@ function View( { data }) {
                         href={e.link}
                       >
                         <div className="flex items-center gap-4">
-                          <div className=" w-[48px] h-[48px] bg-darker rounded-full"></div>
+                          <div className=" flex items-center justify-center w-[48px] h-[48px] bg-darker rounded-full">
+<svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 512 512"><path fill="#ffffff" d="M184 48H328c4.4 0 8 3.6 8 8V96H176V56c0-4.4 3.6-8 8-8zm-56 8V96H64C28.7 96 0 124.7 0 160v96H192 320 512V160c0-35.3-28.7-64-64-64H384V56c0-30.9-25.1-56-56-56H184c-30.9 0-56 25.1-56 56zM512 288H320v32c0 17.7-14.3 32-32 32H224c-17.7 0-32-14.3-32-32V288H0V416c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V288z"/></svg>
+                          </div>
                           <div className="flex flex-col gap-px">
                             <p className=" text-primary">{e.role}</p>
                             <p className=" text-grey">{e.company}</p>
