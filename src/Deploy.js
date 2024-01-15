@@ -10,15 +10,15 @@ function Deploy() {
   const [ porto , setData] = useState({})
   const [ msg , setMsg ] = useState("")
   const [ loading, setLoading ] = useState(false);
-  const [ deployed , setDeployed ] = useState(false)
+  const [ deployed , setDeployed ] = useState("")
 
   const getDeployData = async () => {
-    const { data, error } = await supabase.from('userData').select('deployed').eq('uid',id);
+    const { data, error } = await supabase.from('userData').select('deployName').eq('uid',id);
     if(error) { 
       console.log(error)
     } else {
       console.log(data)
-      setDeployed(data[0].deployed);
+      setDeployed(data[0].deployName);
     }
   }
 
@@ -80,7 +80,7 @@ function Deploy() {
       },
     ]);
 
-    const { error : err} = await supabase.from('userData').update({deployed : "TRUE"}).eq('uid', id)
+    const { error : err} = await supabase.from('userData').update({deployName : deploy}).eq('uid', id)
 
     if(err) {
       console.log(err)
@@ -147,7 +147,7 @@ function Deploy() {
           ></motion.div>
         </div>
       )}
-      {deployed === true && (
+      {deployed.length > 0 && (
         <div className=" flex flex-col gap-4 hover:underline">
           <p>Your porto. is successfully deployed</p>
           <Link to={`/share/${deploy}`}>
@@ -170,7 +170,7 @@ function Deploy() {
           </Link>
         </div>
       )}
-      {loading === false && deployed === false && (
+      {loading === false && deployed.length === 0 && (
         <div className=" flex flex-col gap-4 items-start">
           <p className=" text-3xl text-grey ">Deploy your porto.</p>
           <p>

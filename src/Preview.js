@@ -27,14 +27,36 @@ function Preview() {
         if (error) {
           console.log(error.message);
         } else {
-          console.log(data);
-          setData(data[0]);
+          console.log(data[0].deployName);
+          setData(data[0]); 
         }
       }
     } catch (error) {
       console.error(error.message);
     }
   };
+
+  const addDeploy = async () => {
+    const { data: deployData, error } = await supabase.from("deploy_table").update([
+      {
+        name: data.name,
+        image: data.image,
+        contact: data.contact,
+        oneliner: data.oneliner,
+        aboutSm: data.aboutSm,
+        aboutLg: data.aboutLg,
+        socialmedia: data.socialmedia,
+        projects: data.projects,
+        work: data.work,
+      },
+    ]).eq('deployName',data.deployName)
+
+    if (error) {
+      console.log(error);
+    } else {
+      console.log("Success", deployData);
+    }
+  }; 
 
   useEffect(() => {
     const fetchData = async () => {
@@ -47,7 +69,16 @@ function Preview() {
   }, [userId, data]); 
   return (
     <div className="relative ">
-      <div className="fixed bottom-0 m-10 right-0 text-grey cursor-pointer hover:underline" onClick={() => navigate(`/deploy/${userId.id}`)}>
+      <div className="fixed bottom-0 m-10 right-0 text-grey cursor-pointer hover:underline" onClick={() => {
+        if(data.deployName.length > 0) {
+          addDeploy().then(() => {
+          navigate(`/share/${data.deployName}`);
+
+          })
+        } else {
+          navigate(`/deploy/${userId.id}`);
+        }
+      }}>
         <div className=" flex gap-1 items-center">
           Deploy
           <svg

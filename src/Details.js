@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from './supabase';
 import { useNavigate, Link } from "react-router-dom";
 import {motion} from 'framer-motion'
@@ -6,6 +6,7 @@ import {motion} from 'framer-motion'
 function Details() {
   const [ userId, setUserID ] = useState({});
   const [  viewData, setView ] = useState({});
+  const inputRef = useRef(null)
 
   const navigate = useNavigate();
 
@@ -154,8 +155,11 @@ function Details() {
         ...userData,
         name: Object.keys(viewData).length > 0 ? viewData.name : "",
         email: Object.keys(viewData).length > 0 ? viewData.contact : "",
+        image: Object.keys(viewData).length > 0 ? viewData.image : "",
       });
 
+      setProjects(Object.keys(viewData).length > 0 ? viewData.projects : []);
+      setWorks(Object.keys(viewData).length > 0 ? viewData.work : []);
       setAbout({
         oneliner: Object.keys(viewData).length > 0 ? viewData.oneliner : "",
         aboutLg: Object.keys(viewData).length > 0 ? viewData.aboutLg : "",
@@ -288,6 +292,9 @@ function Details() {
       if (projects !== viewData.projects) {
         updatedData.projects = projects
       }
+      if( userData.image !== viewData.image) {
+        updatedData.image = userData.image
+      }
       
 
       console.log(updatedData, userId.id);
@@ -321,55 +328,61 @@ function Details() {
 
     const uploadImage = async (name, file) => {
 
-      if( name === "avatar") {
-          console.log(file);
-          const { data, error } = await supabase.storage
-            .from("porto")
-            .upload(`${userId.id}/avatar.png`,file);
-    
-            if(error) {
-              console.log(error)
+     if(viewData.image.length > 0) {
+      const { data, error } = await supabase.storage
+        .from("porto")
+        .update(`${userId.id}/avatar.png`, file, {
+          cacheControl: "3600",
+          upsert: true,
+        });
+        if (error) {
+          console.log(error);
+        } else {
+          console.log(data);
+        }
+
+        const { data: imageData } = supabase.storage
+          .from("porto")
+          .getPublicUrl(`${userId.id}/avatar.png`);
+
+        if (data) {
+          setUser({
+            ...userData,
+            image: imageData.publicUrl,
+          });
+          console.log("userData updated");
+        } else {
+          console.log(error);
+        }
+
+
+     }
+          else {
+            console.log(file);
+            const { data, error } = await supabase.storage
+              .from("porto")
+              .upload(`${userId.id}/avatar.png`, file);
+
+            if (error) {
+              console.log(error);
             } else {
               console.log(data);
-              
             }
-            const { data : imageData } = supabase.storage
+            const { data: imageData } = supabase.storage
               .from("porto")
               .getPublicUrl(`${userId.id}/avatar.png`);
 
-              if(data) {
-                setUser({
-                  ...userData,
-                  image: imageData.publicUrl,
-                })
-                console.log("userData updated")
-              } else {
-                console.log(error)
-              }
-        } else {
-          const { data, error } = await supabase.storage
-            .from("porto")
-            .upload(`${userId.id}/logo.png`, file);
-  
-          if (error) {
-            console.log(error.message);
-          } else {
-            console.log(data);
+            if (data) {
+              setUser({
+                ...userData,
+                image: imageData.publicUrl,
+              });
+              console.log("userData updated");
+            } else {
+              console.log(error);
+            }
           }
-          const { data: imageData } = supabase.storage
-            .from("porto")
-            .getPublicUrl(`${userId.id}/logo.png`);
-
-          if (data) {
-            setUser({
-              ...userData,
-              logo: imageData.publicUrl,
-            });
-            console.log("userData updated");
-          } else {
-            console.log(error);
-          }
-        }
+        
     }
 
 
@@ -459,21 +472,39 @@ function Details() {
                 placeholder="contact info. (email)"
                 className="outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
               />
-              <input
-                name="image"
-                type="file"
-                onChange={(e) =>
-                  // setUser({
-                  //   ...userData,
-                  //   image: e.target.files[0],
-                  // })
-                  uploadImage("avatar", e.target.files[0])
-                }
-                placeholder="image"
-                className="outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
-              />
+              {!viewData && (
+                <input
+                  name="image"
+                  type="file"
+                  onChange={(e) =>
+                    // setUser({
+                    //   ...userData,
+                    //   image: e.target.files[0],
+                    // })
+                    uploadImage("avatar", e.target.files[0])
+                  }
+                  placeholder="image"
+                  className="outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
+                />
+              )}
 
-              <input
+              {viewData.image && (
+                <div
+                  className=" flex items-center gap-4 cursor-pointer"
+                >
+                 
+                  <img
+                    className="bg-darker rounded-full w-32 h-32 group-hover:opacity-50"
+                    src={viewData.image}
+                    alt=""
+                  />
+
+                  {/* <input type="file" title='Update image' onChange={(e) => uploadImage("avatar",e.target.files[0])} /> */}
+
+                </div>
+              )}
+
+              {/* <input
                 name="logo"
                 type="file"
                 onChange={(e) =>
@@ -484,7 +515,7 @@ function Details() {
                 }
                 placeholder="logo"
                 className="outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
-              />
+              /> */}
             </div>
           </section>
           <hr className=" my-10 bg-grey text-grey" />
@@ -597,7 +628,7 @@ function Details() {
                 )}
               </div>
             )}
-            <div className=' flex flex-col gap-4'>
+            <div className=" flex flex-col gap-4">
               {viewData.projects &&
                 viewData.projects.map((project, index) => (
                   <div
