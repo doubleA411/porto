@@ -10,6 +10,30 @@ function Details() {
   const navigate = useNavigate();
 
 
+  const [editingProjectIndex, setEditingProjectIndex] = useState(null);
+  const [editingWorkIndex, setEditingWorkIndex] = useState(null);
+
+  const handleEditProject = (index) => {
+    setEditingProjectIndex(index);
+  };
+
+  const handleEditWork = (index) => {
+    setEditingWorkIndex(index);
+  };
+
+  const handleSaveProject = () => {
+    setEditingProjectIndex(null);
+    console.log(projects)
+    // Implement logic to save the edited project details
+  };
+
+  const handleSaveWork = () => {
+    setEditingWorkIndex(null);
+    // Implement logic to save the edited work details
+  };
+
+
+
   async function signOut() {
     const { error } = await supabase.auth.signOut();
     if (error) {
@@ -261,6 +285,9 @@ function Details() {
       if (social.twitter !== viewData.socialmedia.twitter) {
         updatedData.socialmedia.twitter = social.twitter;
       }
+      if (projects !== viewData.projects) {
+        updatedData.projects = projects
+      }
       
 
       console.log(updatedData, userId.id);
@@ -354,7 +381,7 @@ function Details() {
       <div className=" flex items-center justify-between w-full mb-10">
         {viewData && viewData.name && (
           <div className=" fixed bottom-0 right-0 m-10">
-            <Link to={'/view'}>
+            <Link to={"/view"}>
               <div className=" flex gap-1 items-center">
                 <p
                   className=" flex gap-1 items-center text-grey cursor-pointer p-1 hover:underline"
@@ -553,136 +580,339 @@ function Details() {
           </section>
 
           <hr className=" my-10 bg-grey text-grey" />
-          <p className=" text-sm mb-10 text-grey">
-            {" "}
-            Maximum of 5 projects can be added; Projects cannot be edited after
-            adding !! <span className=" font-black text-red-600">*</span>
-            {viewData && viewData.projects && (
-              <p>Projects : {viewData.projects.length}</p>
-            )}
-          </p>
 
           <section className=" flex flex-col md:flex-row gap-2 md:gap-9 col-reverse ">
-            {viewData && viewData.projects && (
-              <h2 className="flex gap-1 md:w-32 text-grey shrink-0">
-                Project {viewData.projects.length + 1}
+            {!viewData && (
+              <h2 className=" flex gap-1 md:w-32 text-grey shrink-0">
+                Projects {projects.length + 1}
               </h2>
             )}
-            <div className="flex flex-col w-full gap-8">
-              <input
-                type="text"
-                name="title"
-                value={proj.title}
-                onChange={(e) => handleProj(e)}
-                placeholder="title"
-                className="outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
-              />
-              <input
-                type="text"
-                name="desc"
-                value={proj.desc}
-                onChange={(e) => handleProj(e)}
-                placeholder="description"
-                className="outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
-              />
-              <input
-                type="text"
-                name="link"
-                value={proj.link}
-                onChange={(e) => handleProj(e)}
-                placeholder="project link"
-                className="outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
-              />
-              <input
-                type="text"
-                name="year"
-                value={proj.year}
-                onChange={(e) => handleProj(e)}
-                placeholder="year"
-                className="outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
-              />
+            {viewData && viewData.projects && (
+              <div className="flex flex-col justify-between gap-1 md:w-32 text-grey shrink-0">
+                <h2>Projects</h2>
+                {viewData && viewData.projects.length < 5 && (
+                  <h2 className=" bg-darker w-fit px-4 py-1" onClick={() => {}}>
+                    Add
+                  </h2>
+                )}
+              </div>
+            )}
+            <div className=' flex flex-col gap-4'>
+              {viewData.projects &&
+                viewData.projects.map((project, index) => (
+                  <div
+                    key={index}
+                    className="mb-4 text-primary flex flex-col gap-4 w-full"
+                  >
+                    {editingProjectIndex === index ? (
+                      <>
+                        <input
+                          type="text"
+                          value={project.title}
+                          className=" outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
+                          onChange={(e) => {
+                            // Update the project title in the state
+                            // You might want to use a more sophisticated state management solution
+                            const updatedProjects = [...viewData.projects];
+                            updatedProjects[index].title = e.target.value;
+                            setProjects(updatedProjects);
+                            // Update the viewData with the modified projects
+                            // setView({ ...viewData, projects: updatedProjects });
+                          }}
+                          placeholder="Title"
+                        />
+                        <input
+                          type="text"
+                          value={project.desc}
+                          className=" outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
+                          onChange={(e) => {
+                            // Update the project description in the state
+                            const updatedProjects = [...viewData.projects];
+                            updatedProjects[index].desc = e.target.value;
+                            setProjects(updatedProjects);
 
-              <button
-                className=" text-white bg-darker px-3 py-2"
-                onClick={() => {
-                  setProjects((prev) => [...prev, proj]);
-                  setProj({
-                    title: "",
-                    link: "",
-                    year: "",
-                    desc: "",
-                  });
-                }}
-              >
-                add
-              </button>
+                            // Update the viewData with the modified projects
+                            // setView({ ...viewData, projects: updatedProjects });
+                          }}
+                          placeholder="Description"
+                        />
+                        <input
+                          type="text"
+                          value={project.link}
+                          className=" outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
+                          onChange={(e) => {
+                            // Update the project description in the state
+                            const updatedProjects = [...viewData.projects];
+                            updatedProjects[index].link = e.target.value;
+                            setProjects(updatedProjects);
+
+                            // Update the viewData with the modified projects
+                            // setView({ ...viewData, projects: updatedProjects });
+                          }}
+                          placeholder="Link"
+                        />
+                        <input
+                          type="text"
+                          value={project.year}
+                          className=" outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
+                          onChange={(e) => {
+                            // Update the project description in the state
+                            const updatedProjects = [...viewData.projects];
+                            updatedProjects[index].year = e.target.value;
+                            setProjects(updatedProjects);
+                            // Update the viewData with the modified projects
+                            // setView({ ...viewData, projects: updatedProjects });
+                          }}
+                          placeholder="Link"
+                        />
+                        {/* Add other editable fields as needed */}
+                        <button
+                          className="text-white bg-darker px-3 py-2"
+                          onClick={handleSaveProject}
+                        >
+                          Save
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <p>Title: {project.title}</p>
+                        <p>Description: {project.desc}</p>
+                        {/* Display other non-editable fields */}
+                        <button
+                          className="text-white bg-darker px-3 py-2"
+                          onClick={() => handleEditProject(index)}
+                        >
+                          Edit
+                        </button>
+                      </>
+                    )}
+                  </div>
+                ))}
             </div>
+            {!viewData && (
+              <div className="flex flex-col w-full gap-8">
+                <input
+                  type="text"
+                  name="title"
+                  value={proj.title}
+                  onChange={(e) => handleProj(e)}
+                  placeholder="title"
+                  className="outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
+                />
+                <input
+                  type="text"
+                  name="desc"
+                  value={proj.desc}
+                  onChange={(e) => handleProj(e)}
+                  placeholder="description"
+                  className="outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
+                />
+                <input
+                  type="text"
+                  name="link"
+                  value={proj.link}
+                  onChange={(e) => handleProj(e)}
+                  placeholder="project link"
+                  className="outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
+                />
+                <input
+                  type="text"
+                  name="year"
+                  value={proj.year}
+                  onChange={(e) => handleProj(e)}
+                  placeholder="year"
+                  className="outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
+                />
+
+                <button
+                  className=" text-white bg-darker px-3 py-2"
+                  onClick={() => {
+                    setProjects((prev) => [...prev, proj]);
+                    setProj({
+                      title: "",
+                      link: "",
+                      year: "",
+                      desc: "",
+                    });
+                  }}
+                >
+                  add
+                </button>
+              </div>
+            )}
           </section>
           <hr className=" my-10 bg-grey text-grey" />
 
           <section className=" flex flex-col md:flex-row gap-2 md:gap-9 col-reverse">
-            <h2 className="flex gap-1 md:w-32 text-grey shrink-0">
-              Work / Intern
-            </h2>
-            <div className=" flex flex-col gap-8 w-full">
-              <input
-                type="text"
-                name="role"
-                value={work.role}
-                onChange={(e) => handleWork(e)}
-                placeholder="role"
-                className="outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
-              />
-              <input
-                type="text"
-                name="company"
-                value={work.company}
-                onChange={(e) => handleWork(e)}
-                placeholder="company"
-                className=" outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
-              />
-              <input
-                type="text"
-                name="from"
-                value={work.from}
-                onChange={(e) => handleWork(e)}
-                placeholder="from"
-                className=" outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
-              />
-              <input
-                type="text"
-                name="to"
-                value={work.to}
-                onChange={(e) => handleWork(e)}
-                placeholder="to"
-                className=" outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
-              />
-
-              <input
-                type="text"
-                name="link"
-                value={work.link}
-                onChange={(e) => handleWork(e)}
-                placeholder="company url"
-                className=" outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
-              />
-
-              <button
-                className=" text-white bg-darker px-3 py-2"
-                onClick={() => {
-                  setWorks((prev) => [...prev, work]);
-                  setWork({
-                    role: "",
-                    company: "",
-                    from: "",
-                    to: "",
-                    link: "",
-                  });
-                }}
-              >
-                add
-              </button>
+            <div className="flex flex-col justify-between gap-1 md:w-32 text-grey shrink-0">
+              <h2>Work / Intern</h2>
+              {viewData && viewData.work.length < 5 && (
+                <h2 className=" bg-darker w-fit px-4 py-1">Add</h2>
+              )}
             </div>
+
+            {viewData.work &&
+              viewData.work.map((experience, index) => (
+                <div key={index} className="mb-4 flex flex-col gap-4">
+                  {editingWorkIndex === index ? (
+                    <>
+                      <input
+                        type="text"
+                        value={experience.role}
+                        className=" outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
+                        onChange={(e) => {
+                          // Update the work role in the state
+                          const updatedWork = [...viewData.work];
+                          updatedWork[index].role = e.target.value;
+                          setWorks(updatedWork);
+                          // Update the viewData with the modified work experiences
+                          // setView({ ...viewData, work: updatedWork });
+                        }}
+                        placeholder="Role"
+                      />
+                      <input
+                        type="text"
+                        value={experience.company}
+                        className=" outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
+                        onChange={(e) => {
+                          // Update the work company in the state
+                          const updatedWork = [...viewData.work];
+                          updatedWork[index].company = e.target.value;
+                          setWorks(updatedWork);
+
+                          // Update the viewData with the modified work experiences
+                          // setView({ ...viewData, work: updatedWork });
+                        }}
+                        placeholder="Company"
+                      />
+                      <input
+                        type="text"
+                        value={experience.from}
+                        className=" outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
+                        onChange={(e) => {
+                          // Update the work company in the state
+                          const updatedWork = [...viewData.work];
+                          updatedWork[index].from = e.target.value;
+                          setWorks(updatedWork);
+
+                          // Update the viewData with the modified work experiences
+                          // setView({ ...viewData, work: updatedWork });
+                        }}
+                        placeholder="From"
+                      />
+                      <input
+                        type="text"
+                        value={experience.to}
+                        className=" outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
+                        onChange={(e) => {
+                          // Update the work company in the state
+                          const updatedWork = [...viewData.work];
+                          updatedWork[index].to = e.target.value;
+                          setWorks(updatedWork);
+
+                          // Update the viewData with the modified work experiences
+                          // setView({ ...viewData, work: updatedWork });
+                        }}
+                        placeholder="To"
+                      />
+                      <input
+                        type="text"
+                        value={experience.link}
+                        className=" outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
+                        onChange={(e) => {
+                          // Update the work company in the state
+                          const updatedWork = [...viewData.work];
+                          updatedWork[index].link = e.target.value;
+                          setWorks(updatedWork);
+                          // Update the viewData with the modified work experiences
+                          // setView({ ...viewData, work: updatedWork });
+                        }}
+                        placeholder="Link"
+                      />
+                      {/* Add other editable fields as needed */}
+                      <button
+                        className="text-white bg-darker px-3 py-2"
+                        onClick={handleSaveWork}
+                      >
+                        Save
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <p>Role: {experience.role}</p>
+                      <p>Company: {experience.company}</p>
+                      {/* Display other non-editable fields */}
+                      <button
+                        className="text-white bg-darker px-3 py-2"
+                        onClick={() => handleEditWork(index)}
+                      >
+                        Edit
+                      </button>
+                    </>
+                  )}
+                </div>
+              ))}
+            {!viewData && (
+              <div className=" flex flex-col gap-8 w-full">
+                <input
+                  type="text"
+                  name="role"
+                  value={work.role}
+                  onChange={(e) => handleWork(e)}
+                  placeholder="role"
+                  className="outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
+                />
+                <input
+                  type="text"
+                  name="company"
+                  value={work.company}
+                  onChange={(e) => handleWork(e)}
+                  placeholder="company"
+                  className=" outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
+                />
+                <input
+                  type="text"
+                  name="from"
+                  value={work.from}
+                  onChange={(e) => handleWork(e)}
+                  placeholder="from"
+                  className=" outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
+                />
+                <input
+                  type="text"
+                  name="to"
+                  value={work.to}
+                  onChange={(e) => handleWork(e)}
+                  placeholder="to"
+                  className=" outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
+                />
+
+                <input
+                  type="text"
+                  name="link"
+                  value={work.link}
+                  onChange={(e) => handleWork(e)}
+                  placeholder="company url"
+                  className=" outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
+                />
+
+                <button
+                  className=" text-white bg-darker px-3 py-2"
+                  onClick={() => {
+                    setWorks((prev) => [...prev, work]);
+                    setWork({
+                      role: "",
+                      company: "",
+                      from: "",
+                      to: "",
+                      link: "",
+                    });
+                  }}
+                >
+                  add
+                </button>
+              </div>
+            )}
           </section>
 
           <div className=" flex-auto flex flex-col bg-red-500 p-10 mt-10 cursor-pointer">

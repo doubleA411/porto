@@ -11,6 +11,20 @@ function Deploy() {
   const [ msg , setMsg ] = useState("")
   const [ loading, setLoading ] = useState(false);
   const [ deployed , setDeployed ] = useState(false)
+
+  const getDeployData = async () => {
+    const { data, error } = await supabase.from('userData').select('deployed').eq('uid',id);
+    if(error) { 
+      console.log(error)
+    } else {
+      console.log(data)
+      setDeployed(data[0].deployed);
+    }
+  }
+
+  useEffect(() => {
+    getDeployData();
+  })
  
     const getData = async () => {
       try {
@@ -66,11 +80,20 @@ function Deploy() {
       },
     ]);
 
+    const { error : err} = await supabase.from('userData').update({deployed : "TRUE"}).eq('uid', id)
+
+    if(err) {
+      console.log(err)
+    } else {
+      console.log("updated")
+    }
+
     if(error) {
       console.log(error)
     } else {
       console.log("Success", data)
     }
+
 
   } 
 

@@ -190,7 +190,7 @@ function View( { data }) {
             <ul className="animated-list flex animate-in flex-col gap-2  md:flex-row md:gap-6 text-grey ">
               <li>
                 <a
-                  href="mailto:aakashsuresh62@gmail.com"
+                  href={`mailto:${data.contact}`}
                   className="underline-offset-4 flex items-center gap-2 no-underline"
                 >
                   <svg
