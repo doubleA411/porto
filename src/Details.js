@@ -6,6 +6,7 @@ import {motion} from 'framer-motion';
 function Details() {
   const [ userId, setUserID ] = useState({});
   const [  viewData, setView ] = useState({});
+  const [isLoading, setIsLoading] = useState();
 
   const [ showModal, setModal ] = useState(false);
   const [ modal , setModalType ] = useState("");
@@ -104,8 +105,53 @@ function Details() {
             setView(data[0]);
           } else {
             console.log("No data found for the user");
+            
             // You might want to handle this case accordingly
           }
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+
+    const fetchData = async () => {
+      try {
+        // Assuming getUser updates viewData directly
+        await getUser();
+
+        if (userId) {
+          let retries = 0;
+          const maxRetries = 2;
+
+          const attemptFetchData = async () => {
+            const { data, error } = await supabase
+              .from("userData")
+              .select()
+              .eq("uid", userId);
+
+            if (error) {
+              console.error("Error fetching data:", error);
+            } else if (data && data.length > 0) {
+              console.log(data[0]);
+              setView(data[0]);
+            } else {
+              console.log(
+                `No data found for the user (attempt ${retries + 1})`
+              );
+              retries++;
+
+              // Retry only up to maxRetries
+              if (retries < maxRetries) {
+                await attemptFetchData();
+              } else {
+                console.log(`Reached maximum retries (${maxRetries}).`);
+                // You might want to handle this case accordingly
+              }
+            }
+          };
+
+          await attemptFetchData();
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -116,9 +162,9 @@ function Details() {
       const fetchData = async () => {
         await getUser();
 
-        if (Object.keys(viewData).length === 0) {
-          await getData();
-        }
+      if(Object.keys(viewData).length === 0){
+         await getData();
+      } 
 
       };
 
@@ -157,34 +203,34 @@ function Details() {
         linkedin : "",
         github : "",
         twitter : ""
-    });
+    }); 
 
 
     useEffect(() => {
       setUser({
         ...userData,
-        name: Object.keys(viewData).length > 0 ? viewData.name : "",
-        email: Object.keys(viewData).length > 0 ? viewData.contact : "",
-        image: Object.keys(viewData).length > 0 ? viewData.image : "",
+        name: Object.keys(viewData).length > 0 ? viewData.name : userData.name,
+        email: Object.keys(viewData).length > 0 ? viewData.contact : userData.email,
+        image: Object.keys(viewData).length > 0 ? viewData.image : userData.image,
       });
 
-      setProjects(Object.keys(viewData).length > 0 ? viewData.projects : []);
-      setWorks(Object.keys(viewData).length > 0 ? viewData.work : []);
+      setProjects(Object.keys(viewData).length > 0 ? viewData.projects : projects);
+      setWorks(Object.keys(viewData).length > 0 ? viewData.work : works);
       setAbout({
-        oneliner: Object.keys(viewData).length > 0 ? viewData.oneliner : "",
-        aboutLg: Object.keys(viewData).length > 0 ? viewData.aboutLg : "",
-        aboutSmall: Object.keys(viewData).length > 0 ? viewData.aboutSm : "",
+        oneliner: Object.keys(viewData).length > 0 ? viewData.oneliner : about.oneliner,
+        aboutLg: Object.keys(viewData).length > 0 ? viewData.aboutLg : about.aboutLg,
+        aboutSmall: Object.keys(viewData).length > 0 ? viewData.aboutSm : about.aboutSmall,
       });
 
       setSocial({
         insta:
-          Object.keys(viewData).length > 0 ? viewData.socialmedia.insta : "",
+          Object.keys(viewData).length > 0 ? viewData.socialmedia.insta : social.insta,
         linkedin:
-          Object.keys(viewData).length > 0 ? viewData.socialmedia.linkedin : "",
+          Object.keys(viewData).length > 0 ? viewData.socialmedia.linkedin : social.linkedin,
         github:
-          Object.keys(viewData).length > 0 ? viewData.socialmedia.github : "",
+          Object.keys(viewData).length > 0 ? viewData.socialmedia.github : social.github,
         twitter:
-          Object.keys(viewData).length > 0 ? viewData.socialmedia.twitter : "",
+          Object.keys(viewData).length > 0 ? viewData.socialmedia.twitter : social.twitter,
       });
     },[viewData])
 
@@ -487,63 +533,63 @@ function Details() {
           {modal === "work" && (
             <div className="flex flex-col w-full gap-8 bg-darker rounded-lg p-10 shadow-md">
               <input
-                  type="text"
-                  name="role"
-                  value={work.role}
-                  onChange={(e) => handleWork(e)}
-                  placeholder="role"
-                  className="outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
-                />
-                <input
-                  type="text"
-                  name="company"
-                  value={work.company}
-                  onChange={(e) => handleWork(e)}
-                  placeholder="company"
-                  className=" outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
-                />
-                <input
-                  type="text"
-                  name="from"
-                  value={work.from}
-                  onChange={(e) => handleWork(e)}
-                  placeholder="from"
-                  className=" outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
-                />
-                <input
-                  type="text"
-                  name="to"
-                  value={work.to}
-                  onChange={(e) => handleWork(e)}
-                  placeholder="to"
-                  className=" outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
-                />
+                type="text"
+                name="role"
+                value={work.role}
+                onChange={(e) => handleWork(e)}
+                placeholder="role"
+                className="outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
+              />
+              <input
+                type="text"
+                name="company"
+                value={work.company}
+                onChange={(e) => handleWork(e)}
+                placeholder="company"
+                className=" outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
+              />
+              <input
+                type="text"
+                name="from"
+                value={work.from}
+                onChange={(e) => handleWork(e)}
+                placeholder="from"
+                className=" outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
+              />
+              <input
+                type="text"
+                name="to"
+                value={work.to}
+                onChange={(e) => handleWork(e)}
+                placeholder="to"
+                className=" outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
+              />
 
-                <input
-                  type="text"
-                  name="link"
-                  value={work.link}
-                  onChange={(e) => handleWork(e)}
-                  placeholder="company url"
-                  className=" outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
-                />
+              <input
+                type="text"
+                name="link"
+                value={work.link}
+                onChange={(e) => handleWork(e)}
+                placeholder="company url"
+                className=" outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
+              />
 
-                <button
-                  className=" text-white bg-darker px-3 py-2"
-                  onClick={() => {
-                    setWorks((prev) => [...prev, work]);
-                    setWork({
-                      role: "",
-                      company: "",
-                      from: "",
-                      to: "",
-                      link: "",
-                    });
-                    handleModalClose();
-                  }}
-                >
-                  add
-                </button>
+              <button
+                className=" text-white bg-darker px-3 py-2"
+                onClick={() => {
+                  setWorks((prev) => [...prev, work]);
+                  setWork({
+                    role: "",
+                    company: "",
+                    from: "",
+                    to: "",
+                    link: "",
+                  });
+                  handleModalClose();
+                }}
+              >
+                add
+              </button>
             </div>
           )}
         </div>
@@ -577,7 +623,7 @@ function Details() {
           </div>
         )}
       </div>
-      {Object.keys(viewData).length === 0 && (
+      {/* {(!viewData || Object.keys(viewData).length === 0) && (
         <motion.div
           animate={{
             scale: [1, 2, 2, 1, 1],
@@ -598,8 +644,8 @@ function Details() {
             margin: "auto",
           }}
         />
-      )}
-      {Object.keys(viewData).length > 0 && (
+      )} */}
+      {
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
           <section className="flex flex-col md:flex-row gap-2 md:gap-9 col-reverse ">
             <h2 className="flex gap-1 md:w-32 text-grey shrink-0">
@@ -629,7 +675,7 @@ function Details() {
                 placeholder="contact info. (email)"
                 className="outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
               />
-              {!viewData && (
+              {Object.keys(viewData).length === 0 && (
                 <input
                   name="image"
                   type="file"
@@ -766,7 +812,7 @@ function Details() {
           <hr className=" my-10 bg-grey text-grey" />
 
           <section className=" flex flex-col md:flex-row gap-2 md:gap-9 col-reverse ">
-            {!viewData && (
+            {Object.keys(viewData).length === 0 && (
               <h2 className=" flex gap-1 md:w-32 text-grey shrink-0">
                 Projects {projects.length + 1}
               </h2>
@@ -879,7 +925,7 @@ function Details() {
                   </div>
                 ))}
             </div>
-            {!viewData && (
+            {Object.keys(viewData).length === 0 && (
               <div className="flex flex-col w-full gap-8">
                 <input
                   type="text"
@@ -936,7 +982,7 @@ function Details() {
           <section className=" flex flex-col md:flex-row gap-2 md:gap-9 col-reverse">
             <div className="flex flex-col justify-between gap-1 md:w-32 text-grey shrink-0">
               <h2>Work / Intern</h2>
-              {viewData && viewData.work.length < 5 && (
+              {viewData && (
                 <h2
                   className=" bg-darker w-fit px-4 py-1"
                   onClick={() => {
@@ -1050,7 +1096,7 @@ function Details() {
                   )}
                 </div>
               ))}
-            {!viewData && (
+            {Object.keys(viewData).length === 0 && (
               <div className=" flex flex-col gap-8 w-full">
                 <input
                   type="text"
@@ -1123,13 +1169,13 @@ function Details() {
               {viewData && viewData.name && (
                 <p className=" text-2xl mb-5">update</p>
               )}
-              {viewData && viewData.length <= 0 && (
+              {Object.keys(viewData).length  === 0 && (
                 <p className=" text-2xl mb-5">submit</p>
               )}
             </div>
           </div>
         </motion.div>
-      )}
+      }
     </div>
   );
 }
