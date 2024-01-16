@@ -189,7 +189,7 @@ function Details() {
         name: "",
         email : "",
         logo : null,
-        image : null,
+        image : "",
     });
 
     const [ about, setAbout] = useState({
@@ -417,7 +417,7 @@ function Details() {
           .from("porto")
           .getPublicUrl(`${userId.id}/avatar.png`);
 
-        if (data) {
+        if (imageData) {
           setUser({
             ...userData,
             image: imageData.publicUrl,
