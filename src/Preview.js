@@ -70,7 +70,7 @@ function Preview() {
   return (
     <div className="relative ">
       <div className="fixed bottom-0 m-10 right-0 text-grey cursor-pointer hover:underline" onClick={() => {
-        if(data.deployName.length > 0) {
+        if(data.deployName && data.deployName.length > 0) {
           addDeploy().then(() => {
           navigate(`/share/${data.deployName}`);
 

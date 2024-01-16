@@ -147,7 +147,7 @@ function Deploy() {
           ></motion.div>
         </div>
       )}
-      {deployed.length > 0 && (
+      {deployed && deployed.length > 0 && (
         <div className=" flex flex-col gap-4 hover:underline">
           <p>Your porto. is successfully deployed</p>
           <Link to={`/share/${deploy}`}>
@@ -170,7 +170,7 @@ function Deploy() {
           </Link>
         </div>
       )}
-      {loading === false && deployed.length === 0 && (
+      {loading === false && !deployed && (
         <div className=" flex flex-col gap-4 items-start">
           <p className=" text-3xl text-grey ">Deploy your porto.</p>
           <p>
