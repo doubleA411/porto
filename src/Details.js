@@ -399,37 +399,6 @@ function Details() {
 
 
     const uploadImage = async (name, file) => {
-
-     if(viewData.image.length > 0) {
-      const { data, error } = await supabase.storage
-        .from("porto")
-        .update(`${userId.id}/avatar.png`, file, {
-          cacheControl: "3600",
-          upsert: true,
-        });
-        if (error) {
-          console.log(error);
-        } else {
-          console.log(data);
-        }
-
-        const { data: imageData } = supabase.storage
-          .from("porto")
-          .getPublicUrl(`${userId.id}/avatar.png`);
-
-        if (imageData) {
-          setUser({
-            ...userData,
-            image: imageData.publicUrl,
-          });
-          console.log("userData updated");
-        } else {
-          console.log(error);
-        }
-
-
-     }
-          else {
             console.log(file);
             const { data, error } = await supabase.storage
               .from("porto")
@@ -455,7 +424,6 @@ function Details() {
             }
           }
         
-    }
 
 
 
