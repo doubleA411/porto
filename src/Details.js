@@ -334,30 +334,35 @@ function Details() {
         updatedData.aboutLg = about.aboutLg;
       }
         if (!updatedData.socialmedia) {
-          updatedData.socialmedia = {};
+          updatedData.socialmedia = {
+            ...viewData.socialmedia
+          };
         }
 
       if (social.insta !== viewData.socialmedia.insta) {
         updatedData.socialmedia = {
-          ...viewData.socialmedia,
+          ...updatedData.socialmedia,
           insta : social.insta
         }
       }
       if (social.linkedin !== viewData.socialmedia.linkedin) {
         updatedData.socialmedia = {
-          ...viewData.socialmedia,
+          ...updatedData.socialmedia,
           linkedin: social.linkedin,
         };
       }
      if (social.github !== viewData.socialmedia.github) {
        updatedData.socialmedia = {
-         ...viewData.socialmedia,
+         ...updatedData.socialmedia,
          github: social.github,
        };
      }
-      if (social.twitter !== viewData.socialmedia.twitter) {
-        updatedData.socialmedia.twitter = social.twitter;
-      }
+    if (social.twitter !== viewData.socialmedia.twitter) {
+      updatedData.socialmedia = {
+        ...updatedData.socialmedia,
+        twitter: social.twitter,
+      };
+    }
       if (projects !== viewData.projects) {
         updatedData.projects = projects
       }
