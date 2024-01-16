@@ -81,7 +81,6 @@ function View( { data }) {
               }}
             ></motion.div>
           </div>
-
         </div>
       )}
       {Object.keys(data).length > 0 && (
@@ -357,7 +356,7 @@ function View( { data }) {
                     <a
                       href={
                         data.socialmedia &&
-                        `https://linkedin.com/${data.socialmedia.linkedin}`
+                        `https://www.linkedin.com/in/${data.socialmedia.linkedin}`
                       }
                       className="underline-offset-4 transition-opacity no-underline w-full border-[1px] rounded-lg p-4 border-darker inline-grid"
                     >
@@ -430,7 +429,17 @@ function View( { data }) {
                       >
                         <div className="flex items-center gap-4">
                           <div className=" flex items-center justify-center w-[48px] h-[48px] bg-darker rounded-full">
-<svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 512 512"><path fill="#ffffff" d="M184 48H328c4.4 0 8 3.6 8 8V96H176V56c0-4.4 3.6-8 8-8zm-56 8V96H64C28.7 96 0 124.7 0 160v96H192 320 512V160c0-35.3-28.7-64-64-64H384V56c0-30.9-25.1-56-56-56H184c-30.9 0-56 25.1-56 56zM512 288H320v32c0 17.7-14.3 32-32 32H224c-17.7 0-32-14.3-32-32V288H0V416c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V288z"/></svg>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              height="16"
+                              width="16"
+                              viewBox="0 0 512 512"
+                            >
+                              <path
+                                fill="#ffffff"
+                                d="M184 48H328c4.4 0 8 3.6 8 8V96H176V56c0-4.4 3.6-8 8-8zm-56 8V96H64C28.7 96 0 124.7 0 160v96H192 320 512V160c0-35.3-28.7-64-64-64H384V56c0-30.9-25.1-56-56-56H184c-30.9 0-56 25.1-56 56zM512 288H320v32c0 17.7-14.3 32-32 32H224c-17.7 0-32-14.3-32-32V288H0V416c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V288z"
+                              />
+                            </svg>
                           </div>
                           <div className="flex flex-col gap-px">
                             <p className=" text-primary">{e.role}</p>

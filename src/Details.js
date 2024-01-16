@@ -24,7 +24,7 @@ function Details() {
   const [editingProjectIndex, setEditingProjectIndex] = useState(null);
   const [editingWorkIndex, setEditingWorkIndex] = useState(null);
 
-  const handleEditProject = (index) => {
+  const handleEditProject = (index) => {  
     setEditingProjectIndex(index);
   };
 
@@ -287,15 +287,28 @@ function Details() {
       if (about.aboutLg !== viewData.aboutLg) {
         updatedData.aboutLg = about.aboutLg;
       }
+        if (!updatedData.socialmedia) {
+          updatedData.socialmedia = {};
+        }
+
       if (social.insta !== viewData.socialmedia.insta) {
-        updatedData.socialmedia.insta = social.insta;
+        updatedData.socialmedia = {
+          ...viewData.socialmedia,
+          insta : social.insta
+        }
       }
       if (social.linkedin !== viewData.socialmedia.linkedin) {
-        updatedData.socialmedia.linkedin = social.linkedin;
+        updatedData.socialmedia = {
+          ...viewData.socialmedia,
+          linkedin: social.linkedin,
+        };
       }
-      if (social.github !== viewData.socialmedia.github) {
-        updatedData.socialmedia.github = social.github;
-      }
+     if (social.github !== viewData.socialmedia.github) {
+       updatedData.socialmedia = {
+         ...viewData.socialmedia,
+         github: social.github,
+       };
+     }
       if (social.twitter !== viewData.socialmedia.twitter) {
         updatedData.socialmedia.twitter = social.twitter;
       }
