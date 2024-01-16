@@ -1,12 +1,22 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from './supabase';
 import { useNavigate, Link } from "react-router-dom";
-import {motion} from 'framer-motion'
+import {motion} from 'framer-motion';
 
 function Details() {
   const [ userId, setUserID ] = useState({});
   const [  viewData, setView ] = useState({});
-  const inputRef = useRef(null)
+
+  const [ showModal, setModal ] = useState(false);
+  const [ modal , setModalType ] = useState("");
+
+  const handleModalOpen = () => {
+    setModal(true);
+  }
+
+  const handleModalClose = () => {
+    setModal(false);
+  }
 
   const navigate = useNavigate();
 
@@ -292,6 +302,9 @@ function Details() {
       if (projects !== viewData.projects) {
         updatedData.projects = projects
       }
+      if (works !== viewData.work) {
+        updatedData.work = works;
+      }
       if( userData.image !== viewData.image) {
         updatedData.image = userData.image
       }
@@ -390,7 +403,138 @@ function Details() {
 
 
   return (
-    <div className=" px-6 md:px-6 pt-16 pb-24 md:pt-20 md:pb-20 max-w-[700px] mx-auto text-primary ">
+    <div
+      className={` px-6 md:px-6 pt-16 pb-24 md:pt-20 md:pb-20 max-w-[700px] mx-auto text-primary `}
+    >
+      {showModal && (
+        <div className=" fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 mx-auto ">
+          <div
+            className=" fixed top-0 right-0 m-2 cursor-pointer"
+            onClick={() => handleModalClose()}
+          >
+            x
+          </div>
+          {modal === "project" && (
+            <div className="flex flex-col w-full gap-8 bg-darker rounded-lg p-10 shadow-md">
+              <input
+                type="text"
+                name="title"
+                value={proj.title}
+                onChange={(e) => handleProj(e)}
+                placeholder="title"
+                className="outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
+              />
+              <input
+                type="text"
+                name="desc"
+                value={proj.desc}
+                onChange={(e) => handleProj(e)}
+                placeholder="description"
+                className="outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
+              />
+              <input
+                type="text"
+                name="link"
+                value={proj.link}
+                onChange={(e) => handleProj(e)}
+                placeholder="project link"
+                className="outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
+              />
+              <input
+                type="text"
+                name="year"
+                value={proj.year}
+                onChange={(e) => handleProj(e)}
+                placeholder="year"
+                className="outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
+              />
+
+              <button
+                className=" text-white bg-dark px-3 py-2"
+                onClick={() => {
+                  if (projects.length < 5) {
+                    setProjects((prev) => [...prev, proj]);
+                  }
+
+                  setProj({
+                    title: "",
+                    link: "",
+                    year: "",
+                    desc: "",
+                  });
+
+                  handleModalClose();
+                }}
+              >
+                add
+              </button>
+            </div>
+          )}
+
+          {modal === "work" && (
+            <div className="flex flex-col w-full gap-8 bg-darker rounded-lg p-10 shadow-md">
+              <input
+                  type="text"
+                  name="role"
+                  value={work.role}
+                  onChange={(e) => handleWork(e)}
+                  placeholder="role"
+                  className="outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
+                />
+                <input
+                  type="text"
+                  name="company"
+                  value={work.company}
+                  onChange={(e) => handleWork(e)}
+                  placeholder="company"
+                  className=" outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
+                />
+                <input
+                  type="text"
+                  name="from"
+                  value={work.from}
+                  onChange={(e) => handleWork(e)}
+                  placeholder="from"
+                  className=" outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
+                />
+                <input
+                  type="text"
+                  name="to"
+                  value={work.to}
+                  onChange={(e) => handleWork(e)}
+                  placeholder="to"
+                  className=" outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
+                />
+
+                <input
+                  type="text"
+                  name="link"
+                  value={work.link}
+                  onChange={(e) => handleWork(e)}
+                  placeholder="company url"
+                  className=" outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
+                />
+
+                <button
+                  className=" text-white bg-darker px-3 py-2"
+                  onClick={() => {
+                    setWorks((prev) => [...prev, work]);
+                    setWork({
+                      role: "",
+                      company: "",
+                      from: "",
+                      to: "",
+                      link: "",
+                    });
+                    handleModalClose();
+                  }}
+                >
+                  add
+                </button>
+            </div>
+          )}
+        </div>
+      )}
       <div className=" flex items-center justify-between w-full mb-10">
         {viewData && viewData.name && (
           <div className=" fixed bottom-0 right-0 m-10">
@@ -489,10 +633,7 @@ function Details() {
               )}
 
               {viewData.image && (
-                <div
-                  className=" flex items-center gap-4 cursor-pointer"
-                >
-                 
+                <div className=" flex items-center gap-4 cursor-pointer">
                   <img
                     className="bg-darker rounded-full w-32 h-32 group-hover:opacity-50"
                     src={viewData.image}
@@ -500,7 +641,6 @@ function Details() {
                   />
 
                   {/* <input type="file" title='Update image' onChange={(e) => uploadImage("avatar",e.target.files[0])} /> */}
-
                 </div>
               )}
 
@@ -622,7 +762,13 @@ function Details() {
               <div className="flex flex-col justify-between gap-1 md:w-32 text-grey shrink-0">
                 <h2>Projects</h2>
                 {viewData && viewData.projects.length < 5 && (
-                  <h2 className=" bg-darker w-fit px-4 py-1" onClick={() => {}}>
+                  <h2
+                    className=" bg-darker w-fit px-4 py-1 cursor-pointer"
+                    onClick={() => {
+                      setModalType("project");
+                      handleModalOpen();
+                    }}
+                  >
                     Add
                   </h2>
                 )}
@@ -778,7 +924,15 @@ function Details() {
             <div className="flex flex-col justify-between gap-1 md:w-32 text-grey shrink-0">
               <h2>Work / Intern</h2>
               {viewData && viewData.work.length < 5 && (
-                <h2 className=" bg-darker w-fit px-4 py-1">Add</h2>
+                <h2
+                  className=" bg-darker w-fit px-4 py-1"
+                  onClick={() => {
+                    setModalType("work");
+                    handleModalOpen();
+                  }}
+                >
+                  Add
+                </h2>
               )}
             </div>
 
