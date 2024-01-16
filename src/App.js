@@ -106,7 +106,7 @@ function App() {
           >
             {session && (
               <>
-                <Route path="/" element={ porto ? <Preview /> : <Details />} />
+                <Route path="/" element={ Object.keys(porto).length < 0 ? <Preview /> : <Details />} />
                 <Route path='/deploy/:id' element = { <Deploy />} />
                 <Route path= '/details' element = {<Details />} />
                 <Route path="/view" element={<Preview />} />
