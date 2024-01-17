@@ -245,7 +245,7 @@ function View( { data }) {
                 <ul className="flex-grow grid grid-cols-1 md:grid-cols-2 gap-2 animated-list">
                   <li className="transition-opacity col-span-1">
                     <a
-                      href="mailto:aakahsuresh62@gmail.com"
+                      href={`mailto:${data.contact}`}
                       className="underline-offset-4 transition-opacity no-underline w-full border rounded-lg p-4 border-darker inline-grid"
                     >
                       <div className="flex items-center gap-3 text-primary">
