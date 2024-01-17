@@ -245,22 +245,30 @@ function View( { data }) {
                 <ul className="flex-grow grid grid-cols-1 md:grid-cols-2 gap-2 animated-list">
                   <li className="transition-opacity col-span-1">
                     <a
-                      href={`mailto:${data.contact}`}
+                      href={
+                        data.socialmedia &&
+                        `https://twitter.com/${data.socialmedia.twitter}`
+                      }
                       className="underline-offset-4 transition-opacity no-underline w-full border rounded-lg p-4 border-darker inline-grid"
                     >
                       <div className="flex items-center gap-3 text-primary">
                         <span className=" text-xl">
                           <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 20 20"
+                            stroke="currentColor"
                             fill="currentColor"
-                            className="w-5 h-5 text-primary"
+                            strokeWidth="0"
+                            viewBox="0 0 496 512"
+                            height="1em"
+                            width="1em"
+                            xmlns="http://www.w3.org/2000/svg"
                           >
-                            <path d="M3 4a2 2 0 00-2 2v1.161l8.441 4.221a1.25 1.25 0 001.118 0L19 7.162V6a2 2 0 00-2-2H3z"></path>
-                            <path d="M19 8.839l-7.77 3.885a2.75 2.75 0 01-2.46 0L1 8.839V14a2 2 0 002 2h14a2 2 0 002-2V8.839z"></path>
+                            <path
+                              fill="#ffffff"
+                              d="M459.4 151.7c.3 4.5 .3 9.1 .3 13.6 0 138.7-105.6 298.6-298.6 298.6-59.5 0-114.7-17.2-161.1-47.1 8.4 1 16.6 1.3 25.3 1.3 49.1 0 94.2-16.6 130.3-44.8-46.1-1-84.8-31.2-98.1-72.8 6.5 1 13 1.6 19.8 1.6 9.4 0 18.8-1.3 27.6-3.6-48.1-9.7-84.1-52-84.1-103v-1.3c14 7.8 30.2 12.7 47.4 13.3-28.3-18.8-46.8-51-46.8-87.4 0-19.5 5.2-37.4 14.3-53 51.7 63.7 129.3 105.3 216.4 109.8-1.6-7.8-2.6-15.9-2.6-24 0-57.8 46.8-104.9 104.9-104.9 30.2 0 57.5 12.7 76.7 33.1 23.7-4.5 46.5-13.3 66.6-25.3-7.8 24.4-24.4 44.8-46.1 57.8 21.1-2.3 41.6-8.1 60.4-16.2-14.3 20.8-32.2 39.3-52.6 54.3z"
+                            />
                           </svg>
                         </span>
-                        <p className=" text-md">Email</p>
+                        <p className=" text-md">Twitter</p>
                         <svg
                           className="w-5 h-5 ml-auto text-grey"
                           xmlns="http://www.w3.org/2000/svg"
@@ -282,6 +290,7 @@ function View( { data }) {
                         data.socialmedia &&
                         `https://github.com/${data.socialmedia.github}`
                       }
+                      target="_blank"
                       className="underline-offset-4 transition-opacity no-underline w-full border rounded-lg p-4 border-darker inline-grid"
                     >
                       <div className="flex items-center gap-3 text-primary">
@@ -320,6 +329,7 @@ function View( { data }) {
                         data.socialmedia &&
                         `https://instagram.com/${data.socialmedia.insta}`
                       }
+                      target="_blank"
                       className="underline-offset-4 transition-opacity no-underline w-full border rounded-lg p-4 border-darker inline-grid"
                     >
                       <div className="flex items-center gap-3 text-primary">
@@ -358,6 +368,7 @@ function View( { data }) {
                         data.socialmedia &&
                         `https://www.linkedin.com/in/${data.socialmedia.linkedin}`
                       }
+                      target="_blank"
                       className="underline-offset-4 transition-opacity no-underline w-full border-[1px] rounded-lg p-4 border-darker inline-grid"
                     >
                       <div className="flex items-center gap-3 text-primary">
@@ -403,6 +414,7 @@ function View( { data }) {
                       <a
                         className="underline-offset-4 flex justify-between w-full px-3 py-2 -mx-3 -my-2 no-underline"
                         href={project.link}
+                        target="_blank"
                       >
                         <div className="flex items-center gap-4">
                           <div className="flex flex-col gap-px">
@@ -426,6 +438,7 @@ function View( { data }) {
                       <a
                         className="underline-offset-4 flex justify-between w-full px-3 py-2 -mx-3 -my-2 no-underline"
                         href={e.link}
+                        target="_blank"
                       >
                         <div className="flex items-center gap-4">
                           <div className=" flex items-center justify-center w-[48px] h-[48px] bg-darker rounded-full">
