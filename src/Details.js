@@ -649,20 +649,27 @@ function Details() {
                 className="outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
               />
               {Object.keys(viewData).length === 0 && (
-                <input
-                  name="image"
-                  type="file"
-                  onChange={(e) =>
-                    // setUser({
-                    //   ...userData,
-                    //   image: e.target.files[0],
-                    // })
-                    uploadImage("avatar", e.target.files[0])
-                  }
-                  placeholder="image"
-                  className="outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
-                />
+
+                <div className=' flex flex-col gap-1'>
+
+                  <input
+                    name="image"
+                    type="file"
+                    onChange={(e) =>
+                      // setUser({
+                      //   ...userData,
+                      //   image: e.target.files[0],
+                      // })
+                      uploadImage("avatar", e.target.files[0])
+                    }
+                    placeholder="image"
+                    className="outline-none bg-transparent border border-grey p-4 rounded-xl w-full"
+                  />
+                 <p className='text-grey text-sm'>image cannot be re-uploaded. *</p>
+                </div>
+
               )}
+
 
               {viewData.image && (
                 <div className=" flex items-center gap-4 cursor-pointer">
@@ -747,6 +754,7 @@ function Details() {
               ></div>
             </h2>
             <div className="flex flex-col w-full gap-8">
+              <p className=' text-grey text-sm'>Provide username for each social media *</p>
               <input
                 name="insta"
                 type="text"
