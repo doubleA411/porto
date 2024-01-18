@@ -86,7 +86,7 @@ function Share() {
         }}
       >
         <div className=" flex gap-1 items-center">
-          Copy Link
+          Share your porto.
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 20 20"
