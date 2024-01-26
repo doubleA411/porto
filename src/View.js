@@ -243,7 +243,8 @@ function View( { data }) {
               <h2 className="md:w-32 text-grey shrink-0">Connect</h2>
               <div className="flex flex-col w-full gap-8">
                 <ul className="flex-grow grid grid-cols-1 md:grid-cols-2 gap-2 animated-list">
-                  <li className="transition-opacity col-span-1">
+                  { data.socialmedia.twitter &&
+                    <li className="transition-opacity col-span-1">
                     <a
                       href={
                         data.socialmedia &&
@@ -268,7 +269,7 @@ function View( { data }) {
                             />
                           </svg>
                         </span>
-                        <p className=" text-md">Twitter</p>
+                        <p className=" text-md">Twitter (X)</p>
                         <svg
                           className="w-5 h-5 ml-auto text-grey"
                           xmlns="http://www.w3.org/2000/svg"
@@ -283,8 +284,8 @@ function View( { data }) {
                         </svg>
                       </div>
                     </a>
-                  </li>
-                  <li className="transition-opacity col-span-1">
+                  </li>}
+                 { data.socialmedia.github && <li className="transition-opacity col-span-1">
                     <a
                       href={
                         data.socialmedia &&
@@ -322,7 +323,8 @@ function View( { data }) {
                         </svg>
                       </div>
                     </a>
-                  </li>
+                  </li>}
+                 { data.socialmedia.insta &&
                   <li className="transition-opacity col-span-1">
                     <a
                       href={
@@ -361,7 +363,8 @@ function View( { data }) {
                         </svg>
                       </div>
                     </a>
-                  </li>
+                  </li>}
+                 { data.socialmedia.linkedin &&
                   <li className="transition-opacity col-span-1">
                     <a
                       href={
@@ -400,7 +403,7 @@ function View( { data }) {
                         </svg>
                       </div>
                     </a>
-                  </li>
+                  </li>}
                 </ul>
               </div>
             </section>

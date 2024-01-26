@@ -7,9 +7,16 @@ function Details() {
   const [ userId, setUserID ] = useState({});
   const [  viewData, setView ] = useState({});
   const [isLoading, setIsLoading] = useState();
+  const [err, setErr] = useState("");
 
   const [ showModal, setModal ] = useState(false);
   const [ modal , setModalType ] = useState("");
+
+   function clearCopiedAfterDelay() {
+     setTimeout(() => {
+       setErr("");
+     }, 5000);
+   }
 
   const handleModalOpen = () => {
     setModal(true);
@@ -115,48 +122,48 @@ function Details() {
     };
 
 
-    const fetchData = async () => {
-      try {
-        // Assuming getUser updates viewData directly
-        await getUser();
+    // const fetchData = async () => {
+    //   try {
+    //     // Assuming getUser updates viewData directly
+    //     await getUser();
 
-        if (userId) {
-          let retries = 0;
-          const maxRetries = 2;
+    //     if (userId) {
+    //       let retries = 0;
+    //       const maxRetries = 2;
 
-          const attemptFetchData = async () => {
-            const { data, error } = await supabase
-              .from("userData")
-              .select()
-              .eq("uid", userId);
+    //       const attemptFetchData = async () => {
+    //         const { data, error } = await supabase
+    //           .from("userData")
+    //           .select()
+    //           .eq("uid", userId);
 
-            if (error) {
-              console.error("Error fetching data:", error);
-            } else if (data && data.length > 0) {
-              console.log(data[0]);
-              setView(data[0]);
-            } else {
-              console.log(
-                `No data found for the user (attempt ${retries + 1})`
-              );
-              retries++;
+    //         if (error) {
+    //           console.error("Error fetching data:", error);
+    //         } else if (data && data.length > 0) {
+    //           console.log(data[0]);
+    //           setView(data[0]);
+    //         } else {
+    //           console.log(
+    //             `No data found for the user (attempt ${retries + 1})`
+    //           );
+    //           retries++;
 
-              // Retry only up to maxRetries
-              if (retries < maxRetries) {
-                await attemptFetchData();
-              } else {
-                console.log(`Reached maximum retries (${maxRetries}).`);
-                // You might want to handle this case accordingly
-              }
-            }
-          };
+    //           // Retry only up to maxRetries
+    //           if (retries < maxRetries) {
+    //             await attemptFetchData();
+    //           } else {
+    //             console.log(`Reached maximum retries (${maxRetries}).`);
+    //             // You might want to handle this case accordingly
+    //           }
+    //         }
+    //       };
 
-          await attemptFetchData();
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
+    //       await attemptFetchData();
+    //     }
+    //   } catch (error) {
+    //     console.error("Error fetching data:", error);
+    //   }
+    // };
 
     useEffect(() => {
       const fetchData = async () => {
@@ -292,26 +299,34 @@ function Details() {
 
 
     const addData = async () => {
-      const { data, error } = await supabase.from("userData").insert([
-        {
-          name: userData.name,
-          image: userData.image,
-          // logo: userData.logo,
-          contact: userData.email,
-          oneliner: about.oneliner,
-          aboutSm: about.aboutSmall,
-          aboutLg: about.aboutLg,
-          socialmedia: social,
-          uid: userId.id,
-          projects: projects,
-          work : works,
-        },
-      ]);
-      if(error) {
-        console.log(error.message);
+      if(userData.name && userData.image && userData.email && about.oneliner && about.aboutSmall && about.aboutLg && projects.length > 0 && works.length > 0) {
+            const { data, error } = await supabase.from("userData").insert([
+              {
+                name: userData.name,
+                image: userData.image,
+                // logo: userData.logo,
+                contact: userData.email,
+                oneliner: about.oneliner,
+                aboutSm: about.aboutSmall,
+                aboutLg: about.aboutLg,
+                socialmedia: social,
+                uid: userId.id,
+                projects: projects,
+                work: works,
+              },
+            ]);
+            if (error) {
+              console.log(error.message);
+            } else {
+              console.log("Success ", data)
+              navigate("/view")
+            }
+
       } else {
-        console.log("Success ",data);
+        setErr("Please fill all the fields");
+        clearCopiedAfterDelay();
       }
+      
     };
 
     const updateData = async () => {
@@ -389,11 +404,13 @@ function Details() {
           console.log(error);
         } else {
           console.log("Success", data);
+          navigate('/view');
         }
       }
     }
 
     const submitData = async () => {
+
       if(Object.keys(viewData).length > 0) {
        await updateData();
       } else {
@@ -1144,7 +1161,7 @@ function Details() {
             <div
               className=" flex justify-between"
               onClick={() => {
-                submitData().then(() => navigate("/view"));
+                submitData()
               }}
             >
               {viewData && viewData.name && (
@@ -1155,6 +1172,7 @@ function Details() {
               )}
             </div>
           </div>
+          <p className={`pt-10 transition duration-300 ease-out text-red-600 text-md ${err ? 'opacity-100' : 'opacity-0'}`}>{err}</p>
         </motion.div>
       }
     </div>
