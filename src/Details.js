@@ -7,6 +7,8 @@ function Details() {
   const [ userId, setUserID ] = useState({});
   const [  viewData, setView ] = useState({});
   const [isLoading, setIsLoading] = useState();
+  const [imageUpload, setImageUpload] = useState(false);
+  const [msg , setMsg] = useState("")
   const [err, setErr] = useState("");
 
   const [ showModal, setModal ] = useState(false);
@@ -323,6 +325,7 @@ function Details() {
             }
 
       } else {
+        console.log()
         setErr("Please fill all the fields");
         clearCopiedAfterDelay();
       }
@@ -422,6 +425,9 @@ function Details() {
 
     const uploadImage = async (name, file) => {
             console.log(file);
+            setMsg("Uploading image please wait...")
+            setImageUpload(true);
+
             const { data, error } = await supabase.storage
               .from("porto")
               .upload(`${userId.id}/avatar.png`, file);
@@ -441,6 +447,10 @@ function Details() {
                 image: imageData.publicUrl,
               });
               console.log("userData updated");
+              setMsg("Image Uploaded")
+              setTimeout(() => {
+                setImageUpload(false);
+              }, 5000);
             } else {
               console.log(error);
             }
@@ -455,6 +465,13 @@ function Details() {
     <div
       className={` px-6 md:px-6 pt-16 pb-24 md:pt-20 md:pb-20 max-w-[700px] mx-auto text-primary `}
     >
+
+      {
+        imageUpload && 
+        <div className=' absolute top-0 left-0 m-10 bg-darker px-2 py-5 text-primary rounded-lg' >
+          Uploading image please wait...
+        </div>
+      }
       {showModal && (
         <div className=" fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 mx-auto ">
           <div
